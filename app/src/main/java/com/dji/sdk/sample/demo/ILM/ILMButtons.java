@@ -61,5 +61,15 @@ public class ILMButtons {
     protected void goTo() {
         waypoint.coordinate = new LocationCoordinate2D(32.101355, 35.202021);
     }
+
+    public void VirtualStickOn() {
+        flightController.setVirtualStickModeEnabled(true, new CommonCallbacks.CompletionCallback() {
+            @Override
+            public void onResult(DJIError djiError) {
+                flightController.setVirtualStickAdvancedModeEnabled(true);
+                DialogUtils.showDialogBasedOnError(context, djiError);
+            }
+        });
+    }
 }
 
