@@ -3,13 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:context="com.dji.sdk.sample.demo.ILM.ILMRemoteControllerView">
 
     <RelativeLayout
-        android:id="@+id/relativeLayout2"
-        android:layout_width="361dp"
-        android:layout_height="52dp"
+        android:id="@+id/buttons_relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
         <Button
@@ -25,18 +27,6 @@
             android:textColor="@color/common_text_color"
             android:textSize="15sp" />
 
-        <Button
-            android:id="@+id/btn_ILM_GoTo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="2dp"
-            android:layout_marginBottom="2dp"
-            android:layout_toEndOf="@+id/btn_ILM_Land"
-            android:background="@drawable/round_btn"
-            android:text="@string/go_to"
-            android:textColor="@color/common_text_color"
-            android:textSize="15sp" />
 
         <Button
             android:id="@+id/btn_ILM_Stop"
@@ -64,13 +54,37 @@
             android:textColor="@color/common_text_color"
             android:textSize="15sp" />
 
+        <Button
+            android:id="@+id/btn_ILM_GoTo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_toEndOf="@+id/btn_ILM_Land"
+            android:background="@drawable/round_btn"
+            android:text="@string/go_to"
+            android:textColor="@color/common_text_color"
+            android:textSize="15sp" />
+
+        <Button
+            android:id="@+id/btn_ILM_EnableVirtualStick"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="20dp"
+            android:layout_marginBottom="2dp"
+            android:layout_toEndOf="@+id/btn_ILM_GoTo"
+            android:background="@drawable/ilm_virtual_stick_icon" />
+
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/titude_relativLayout"
         android:layout_width="200dp"
         android:layout_height="66dp"
         android:layout_marginStart="4dp"
-        app:layout_constraintBottom_toTopOf="@+id/relativeLayout2"
+        app:layout_constraintBottom_toTopOf="@+id/buttons_relativeLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mapView_ILM"
         app:layout_constraintVertical_bias="0.87">
@@ -122,21 +136,21 @@
         android:layout_height="153dp"
         android:layout_marginBottom="180dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/relativeLayout"
+        app:layout_constraintEnd_toStartOf="@+id/video_relativeLaout"
         app:layout_constraintHorizontal_bias="0.842"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        />
 
     <RelativeLayout
-        android:id="@+id/relativeLayout"
+        android:id="@+id/video_relativeLaout"
         android:layout_width="416dp"
         android:layout_height="273dp"
         android:layout_marginBottom="60dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.882"
-        app:layout_constraintStart_toStartOf="parent">
+        android:layout_marginEnd="30dp"
+        >
 
-        <!--        app:layout_constraintTop_toBottomOf="@+id/include"-->
 
         <FrameLayout
             android:layout_width="match_parent"

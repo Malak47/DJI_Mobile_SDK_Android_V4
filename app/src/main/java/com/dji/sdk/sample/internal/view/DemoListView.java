@@ -9,6 +9,7 @@ import android.widget.FrameLayout;
 
 import com.dji.sdk.sample.R;
 import com.dji.sdk.sample.demo.ILM.ILMRemoteControllerView;
+import com.dji.sdk.sample.demo.ILM.ILMVirtualStickView;
 import com.dji.sdk.sample.demo.ILM.ILMStatusBar;
 import com.dji.sdk.sample.demo.accessory.AccessoryAggregationView;
 import com.dji.sdk.sample.demo.accessory.AudioFileListManagerView;
