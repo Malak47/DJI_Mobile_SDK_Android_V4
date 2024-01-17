@@ -9,7 +9,6 @@ import org.osmdroid.views.MapView;
 import android.app.Service;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
@@ -30,28 +29,12 @@ public class ILMRemoteControllerView extends RelativeLayout implements View.OnCl
     private ILMStatusBar statusBar;
     private ILMCSVLog csvLog;
     private ILMButtons buttons;
-    protected Button virtualStickBtn;
-    protected ILMVirtualStickView virtualStickView;
+    private ILMVirtualStickView virtualStickView;
 
     public ILMRemoteControllerView(Context context) {
         super(context);
         this.context = context;
         init(context);
-    }
-
-    public void switchToVirtualStickLayout() {
-        findViewById(R.id.buttons_relativeLayout).setVisibility(View.INVISIBLE);
-        findViewById(R.id.buttons_relativeLayout).setClickable(true);
-        addView(virtualStickView);
-        virtualStickView.setVisibility(View.VISIBLE);
-        buttons.VirtualStickOn();
-    }
-
-    public void switchToMainLayout() {
-        virtualStickView.setVisibility(View.INVISIBLE);
-        findViewById(R.id.buttons_relativeLayout).setVisibility(View.VISIBLE);
-        findViewById(R.id.buttons_relativeLayout).setClickable(true);
-
     }
 
     private void init(Context context) {
@@ -61,8 +44,10 @@ public class ILMRemoteControllerView extends RelativeLayout implements View.OnCl
         addView(statusBar);
         //<<==========================Virtual Stick=========================>>//
         virtualStickView = new ILMVirtualStickView(context);
-//        addView(virtualStickView);
-//        virtualStickView.setVisibility(View.INVISIBLE);
+        addView(virtualStickView);
+        virtualStickView.setVisibility(View.INVISIBLE);
+        findViewById(R.id.virtualStickRelativeLayout).setVisibility(View.INVISIBLE);
+        virtualStickView.setClickable(false);
         //<<==============================================================>>//
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Service.LAYOUT_INFLATER_SERVICE);
         layoutInflater.inflate(R.layout.view_ilm_remote_controller, this, true);
@@ -70,7 +55,7 @@ public class ILMRemoteControllerView extends RelativeLayout implements View.OnCl
     }
 
     private void initUI() {
-        //<<==========================CSV Log==========================>>//
+        //<<=========================CSV Log==========================>>//
         csvLog = new ILMCSVLog(context, statusBar);
         csvLog.createLogBrain();
         //<<==========================Map==========================>>//
@@ -95,8 +80,25 @@ public class ILMRemoteControllerView extends RelativeLayout implements View.OnCl
         buttons.stopbtn.setOnClickListener(this);
         buttons.landbtn.setOnClickListener(this);
         buttons.goTobtn.setOnClickListener(this);
-        virtualStickBtn = findViewById(R.id.btn_ILM_EnableVirtualStick);
-        virtualStickBtn.setOnClickListener(this);
+        buttons.EnableVirtualStickBtn.setOnClickListener(this);
+    }
+
+    public void switchToVirtualStickLayout() {
+        findViewById(R.id.buttons_relativeLayout).setVisibility(View.INVISIBLE);
+        findViewById(R.id.buttons_relativeLayout).setClickable(true);
+
+        virtualStickView.setVisibility(View.VISIBLE);
+        findViewById(R.id.virtualStickRelativeLayout).setVisibility(View.VISIBLE);
+        virtualStickView.setClickable(true);
+        buttons.EnableVirtualStick();
+    }
+
+    public void switchToMainLayout() {
+        virtualStickView.setVisibility(View.INVISIBLE);
+        findViewById(R.id.virtualStickRelativeLayout).setVisibility(View.INVISIBLE);
+
+        findViewById(R.id.buttons_relativeLayout).setVisibility(View.VISIBLE);
+        findViewById(R.id.buttons_relativeLayout).setClickable(true);
     }
 
     @Override
@@ -114,9 +116,8 @@ public class ILMRemoteControllerView extends RelativeLayout implements View.OnCl
             case R.id.btn_ILM_GoTo:
                 buttons.goTo();
                 break;
-            case R.id.btn_ILM_EnableVirtualStick:
+            case R.id.btn_ILM_Enable_VirtualStick:
                 switchToVirtualStickLayout();
-
             default:
                 break;
         }

@@ -68,7 +68,7 @@
             android:textSize="15sp" />
 
         <Button
-            android:id="@+id/btn_ILM_EnableVirtualStick"
+            android:id="@+id/btn_ILM_Enable_VirtualStick"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_alignParentBottom="true"

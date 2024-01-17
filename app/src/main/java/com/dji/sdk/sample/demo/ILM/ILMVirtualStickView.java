@@ -15,7 +15,6 @@ import com.dji.sdk.sample.internal.utils.DialogUtils;
 import com.dji.sdk.sample.internal.utils.ModuleVerificationUtil;
 import com.dji.sdk.sample.internal.utils.OnScreenJoystick;
 import com.dji.sdk.sample.internal.utils.ToastUtils;
-import com.dji.sdk.sample.internal.utils.VideoFeedView;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -40,10 +39,6 @@ public class ILMVirtualStickView extends RelativeLayout implements View.OnClickL
     private float yaw;
     private float throttle;
     private FlightController flightController = null;
-//    private ILMVideo videoController;
-//    private VideoFeedView videoFeedView;
-//    private View coverView;
-
 
     public ILMVirtualStickView(Context context) {
         super(context);
@@ -62,7 +57,6 @@ public class ILMVirtualStickView extends RelativeLayout implements View.OnClickL
         if (null != sendVirtualStickDataTimer) {
             if (sendVirtualStickDataTask != null) {
                 sendVirtualStickDataTask.cancel();
-
             }
             sendVirtualStickDataTimer.cancel();
             sendVirtualStickDataTimer.purge();
@@ -94,14 +88,10 @@ public class ILMVirtualStickView extends RelativeLayout implements View.OnClickL
     }
 
     private void initUI() {
-//        videoFeedView = findViewById(R.id.videoFeedView_ILM);
-//        coverView = findViewById(R.id.view_ILM_coverView);
-//        videoController = new ILMVideo(videoFeedView, coverView);
-//        videoController.displayVideo();
-
-        btnDisableVirtualStick = findViewById(R.id.button_ILM_disableVirtualStick);
         screenJoystickRight = findViewById(R.id.directionJoystickRight);
         screenJoystickLeft = findViewById(R.id.directionJoystickLeft);
+
+        btnDisableVirtualStick = findViewById(R.id.button_ILM_disableVirtualStick);
         btnDisableVirtualStick.setOnClickListener(this);
     }
 

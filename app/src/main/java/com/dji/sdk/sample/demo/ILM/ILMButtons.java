@@ -22,6 +22,7 @@ public class ILMButtons {
     protected Button stopbtn;
     protected Button landbtn;
     protected Button takeOffbtn;
+    protected Button EnableVirtualStickBtn;
     private Context context;
     FlightController flightController = ModuleVerificationUtil.getFlightController();
     private Waypoint waypoint = new Waypoint();
@@ -37,11 +38,12 @@ public class ILMButtons {
     };
 
     public ILMButtons(Context context, View view) {
+        this.context = context;
         goTobtn = view.findViewById(R.id.btn_ILM_GoTo);
         stopbtn = view.findViewById(R.id.btn_ILM_Stop);
         landbtn = view.findViewById(R.id.btn_ILM_Land);
         takeOffbtn = view.findViewById(R.id.btn_ILM_Take_Off);
-        this.context = context;
+        EnableVirtualStickBtn = view.findViewById(R.id.btn_ILM_Enable_VirtualStick);
     }
 
     protected void takeOff() {
@@ -62,7 +64,7 @@ public class ILMButtons {
         waypoint.coordinate = new LocationCoordinate2D(32.101355, 35.202021);
     }
 
-    public void VirtualStickOn() {
+    public void EnableVirtualStick() {
         flightController.setVirtualStickModeEnabled(true, new CommonCallbacks.CompletionCallback() {
             @Override
             public void onResult(DJIError djiError) {
