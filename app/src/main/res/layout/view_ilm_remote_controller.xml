@@ -9,19 +9,33 @@
     <RelativeLayout
         android:id="@+id/buttons_relativeLayout"
         android:layout_width="match_parent"
-        android:layout_height="55dp"
+        android:layout_height="60dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
         <Button
-            android:id="@+id/btn_ILM_Take_Off"
+            android:id="@+id/btn_ILM_Panic_Stop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentBottom="true"
             android:layout_marginStart="2dp"
             android:layout_marginBottom="2dp"
+            android:background="@drawable/ilm_round_btn_panic"
+            android:text="@string/panic"
+            android:textColor="@color/common_text_color"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btn_ILM_Take_Off"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="2dp"
+            android:layout_marginBottom="2dp"
+            android:layout_toEndOf="@+id/btn_ILM_Panic_Stop"
             android:background="@drawable/round_btn"
             android:text="@string/take_off"
             android:textColor="@color/common_text_color"
@@ -55,6 +69,7 @@
             android:textSize="15sp" />
 
         <Button
+
             android:id="@+id/btn_ILM_GoTo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -77,6 +92,49 @@
             android:layout_toEndOf="@+id/btn_ILM_GoTo"
             android:background="@drawable/ilm_virtual_stick_icon" />
 
+        <Button
+            android:id="@+id/btn_ILM_Start_Recording"
+            android:layout_width="60dp"
+            android:layout_height="30dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="20dp"
+            android:layout_marginBottom="10dp"
+            android:layout_toEndOf="@+id/btn_ILM_Enable_VirtualStick"
+            android:background="@drawable/ilm_record" />
+
+        <LinearLayout
+            android:id="@+id/ILM_RecordingLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="20dp"
+            android:layout_toEndOf="@+id/btn_ILM_Enable_VirtualStick"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:visibility="invisible"
+            android:clickable="false">
+
+            <Button
+                android:id="@+id/btn_ILM_Stop_Recording"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
+                android:background="@drawable/ilm_recording"
+                android:visibility="visible"
+                android:layout_marginTop="5dp"
+                />
+
+            <TextView
+                android:id="@+id/textView_ILM_Recording_Count"
+                android:layout_marginTop="-62dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="visible"
+                android:text="00:00"
+                android:textSize="10sp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textStyle="bold"/>
+        </LinearLayout>
     </RelativeLayout>
 
     <RelativeLayout
@@ -138,19 +196,16 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/video_relativeLaout"
         app:layout_constraintHorizontal_bias="0.842"
-        app:layout_constraintStart_toStartOf="parent"
-        />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <RelativeLayout
         android:id="@+id/video_relativeLaout"
         android:layout_width="416dp"
         android:layout_height="273dp"
+        android:layout_marginEnd="30dp"
         android:layout_marginBottom="60dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginEnd="30dp"
-        >
-
+        app:layout_constraintEnd_toEndOf="parent">
 
         <FrameLayout
             android:layout_width="match_parent"
