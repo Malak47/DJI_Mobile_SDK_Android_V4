@@ -76,11 +76,13 @@ public class ILMRemoteControllerView extends RelativeLayout implements View.OnCl
         statusBar.updatePitchRollYaw();
         //<<==========================Buttons==========================>>//
         buttons = new ILMButtons(context, this);
-        buttons.takeOffbtn.setOnClickListener(this);
-        buttons.stopbtn.setOnClickListener(this);
-        buttons.landbtn.setOnClickListener(this);
-        buttons.goTobtn.setOnClickListener(this);
+        buttons.takeOffBtn.setOnClickListener(this);
+        buttons.stopBtn.setOnClickListener(this);
+        buttons.landBtn.setOnClickListener(this);
+        buttons.goToBtn.setOnClickListener(this);
         buttons.EnableVirtualStickBtn.setOnClickListener(this);
+        buttons.startRecordingBtn.setOnClickListener(this);
+        buttons.stopRecordingBtn.setOnClickListener(this);
     }
 
     public void switchToVirtualStickLayout() {
@@ -118,6 +120,18 @@ public class ILMRemoteControllerView extends RelativeLayout implements View.OnCl
                 break;
             case R.id.btn_ILM_Enable_VirtualStick:
                 switchToVirtualStickLayout();
+                break;
+            case R.id.btn_ILM_Panic_Stop:
+                buttons.panicStop();
+                break;
+            case R.id.btn_ILM_Start_Recording:
+                buttons.isRecording = !buttons.isRecording;
+                buttons.startRecording();
+                break;
+            case R.id.btn_ILM_Stop_Recording:
+                buttons.stopRecording();
+                break;
+
             default:
                 break;
         }
