@@ -81,8 +81,8 @@ public class ILMRemoteControllerView extends RelativeLayout implements View.OnCl
         buttons.landBtn.setOnClickListener(this);
         buttons.goToBtn.setOnClickListener(this);
         buttons.EnableVirtualStickBtn.setOnClickListener(this);
-        buttons.startRecordingBtn.setOnClickListener(this);
-        buttons.stopRecordingBtn.setOnClickListener(this);
+        buttons.panicStopBtn.setOnClickListener(this);
+        buttons.RecordBtn.setOnClickListener(this);
     }
 
     public void switchToVirtualStickLayout() {
@@ -124,14 +124,10 @@ public class ILMRemoteControllerView extends RelativeLayout implements View.OnCl
             case R.id.btn_ILM_Panic_Stop:
                 buttons.panicStop();
                 break;
-            case R.id.btn_ILM_Start_Recording:
+            case R.id.btn_ILM_Record:
                 buttons.isRecording = !buttons.isRecording;
-                buttons.startRecording();
+                buttons.record();
                 break;
-            case R.id.btn_ILM_Stop_Recording:
-                buttons.stopRecording();
-                break;
-
             default:
                 break;
         }

@@ -390,6 +390,9 @@
     <string name="TEST">test</string>
     <string name="take_off">Take Off</string>
     <string name="panic">PANIC</string>
+    <string name="add_waypoint">Add Waypoint</string>
+    <string name="repeat_route">Repeat Route</string>
+    <string name="start_recording">Start Recording</string>
 
 
 </resources>
