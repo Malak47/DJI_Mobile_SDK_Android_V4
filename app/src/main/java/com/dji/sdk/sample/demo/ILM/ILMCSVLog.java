@@ -29,7 +29,10 @@ public class ILMCSVLog {
         String currentDate = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         String filename = "ILM_DJI_Drone_Data_" + currentDate + ".csv";
 
-        File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+        File path = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS), "DJI_Drone_Logs");
+        if (!path.exists()) {
+            path.mkdirs();
+        }
         File file = new File(path, filename);
 
         try {
