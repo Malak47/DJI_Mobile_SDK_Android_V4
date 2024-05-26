@@ -26,9 +26,9 @@
     <!-- ILM -->
     <string name="component_listview_ilm_remote_controller">ILM Remote Controller</string>
     <string name="component_listview_ilm_status_bar">ILM Status Bar</string>
-    <string name="longitude_0">Longitude: 0</string>
-    <string name="latitude_0">Latitude: 0</string>
-    <string name="altitude_0">Altitude: 0</string>
+    <string name="longitude">Longitude</string>
+    <string name="latitude">Latitude</string>
+    <string name="altitude">Altitude</string>
     <string name="stop">Stop</string>
     <string name="land">Land</string>
     <string name="go_to">Go To</string>

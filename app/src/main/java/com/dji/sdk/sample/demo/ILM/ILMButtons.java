@@ -2,15 +2,10 @@ package com.dji.sdk.sample.demo.ILM;
 
 import static com.dji.sdk.sample.internal.utils.ToastUtils.showToast;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.CountDownTimer;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.dji.sdk.sample.R;
@@ -110,7 +105,7 @@ public class ILMButtons {
     }
 
     protected void goTo() {
-        waypoint.coordinate = new LocationCoordinate2D(32.101355, 35.202021);
+        waypoint.coordinate = new LocationCoordinate2D(32.000010, 35.000002);
     }
 
     public void EnableVirtualStick() {

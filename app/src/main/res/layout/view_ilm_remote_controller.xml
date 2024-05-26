@@ -1,311 +1,233 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.dji.sdk.sample.demo.ILM.ILMRemoteControllerView">
 
-    <RelativeLayout
-        android:id="@+id/buttons_relativeLayout"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <Button
-            android:id="@+id/btn_ILM_Panic_Stop"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="2dp"
-            android:layout_marginBottom="2dp"
-            android:background="@drawable/ilm_round_btn_panic"
-            android:text="@string/panic"
-            android:textColor="@color/common_text_color"
-            android:textSize="15sp"
-            android:textStyle="bold" />
-
-        <LinearLayout
-            android:id="@+id/layout_ILM_Take_Off"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="20dp"
-            android:layout_marginBottom="2dp"
-            android:layout_toEndOf="@+id/btn_ILM_Panic_Stop"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/textView_ILM_Take_Off"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/take_off"
-                android:textColor="@color/black"
-                android:textSize="10sp"
-                android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/btn_ILM_Take_Off"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="@drawable/ilm_drone_takeoff" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/layout_ILM_Stop"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="20dp"
-            android:layout_marginBottom="2dp"
-            android:layout_toEndOf="@+id/layout_ILM_Take_Off"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/textView_ILM_Stop"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/stop"
-                android:textColor="@color/black"
-                android:textSize="10sp"
-                android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/btn_ILM_Stop"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="@drawable/ilm_drone_stop" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/layout_ILM_Land"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="20dp"
-            android:layout_marginBottom="2dp"
-            android:layout_toEndOf="@+id/layout_ILM_Stop"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/textView_ILM_Land"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/land"
-                android:textColor="@color/black"
-                android:textSize="10sp"
-                android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/btn_ILM_Land"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="@drawable/ilm_drone_land" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/layout_ILM_GoTo"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="20dp"
-            android:layout_marginBottom="2dp"
-            android:layout_toEndOf="@+id/layout_ILM_Land"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/textView_ILM_GoTo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/go_to"
-                android:textColor="@color/black"
-                android:textSize="10sp"
-                android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/btn_ILM_GoTo"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="@drawable/ilm_drone_go_to" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/layout_ILM_Waypoint"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="20dp"
-            android:layout_marginBottom="2dp"
-            android:layout_toEndOf="@+id/layout_ILM_GoTo"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/textView_ILM_Waypoint"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Waypoint"
-                android:textColor="@color/black"
-                android:textSize="10sp"
-                android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/btn_ILM_Waypoint"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="@drawable/ilm_waypoint" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/layout_ILM_Enable_VirtualStick"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="20dp"
-            android:layout_marginBottom="2dp"
-            android:layout_toEndOf="@+id/layout_ILM_Waypoint"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/textView_ILM_Enable_VirtualStick"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Virtual Stick"
-                android:textColor="@color/black"
-                android:textSize="10sp"
-                android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/btn_ILM_Enable_VirtualStick"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="@drawable/ilm_drone_virtualstick" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/layout_ILM_Record"
-            android:layout_width="wrap_content"
-            android:layout_height="60dp"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="20dp"
-            android:layout_marginBottom="2dp"
-            android:layout_toEndOf="@+id/layout_ILM_Enable_VirtualStick"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/textView_ILM_Record"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/start_recording"
-                android:textColor="@color/black"
-                android:textSize="10sp"
-                android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/btn_ILM_Record"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="@drawable/ilm_drone_capture_video_off" />
-        </LinearLayout>
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/titude_relativLayout"
-        android:layout_width="200dp"
+    <ScrollView
+        android:id="@+id/buttonsScrollView"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="10dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mapView_ILM">
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="5dp"
+        android:scrollbars="horizontal">
 
-        <TextView
-            android:id="@+id/textView_ILM_Latitude"
-            android:layout_width="199dp"
+        <LinearLayout
+            android:id="@+id/buttons_relativeLayout"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="1dp"
-            android:layout_marginTop="1dp"
-            android:layout_marginEnd="0dp"
-            android:text="@string/latitude_0"
-            android:textColor="#FF1100" />
+            android:gravity="center"
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/textView_ILM_Longitude"
-            android:layout_width="199dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/textView_ILM_Latitude"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="1dp"
-            android:layout_marginTop="1dp"
-            android:layout_marginEnd="0dp"
-            android:text="@string/longitude_0"
-            android:textColor="#FF1100" />
+            <Button
+                android:id="@+id/btn_ILM_Panic_Stop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ilm_round_btn_panic"
+                android:text="@string/panic"
+                android:textColor="@color/common_text_color"
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/textView_ILM_Altitude"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/textView_ILM_Longitude"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="1dp"
-            android:layout_marginTop="1dp"
-            android:layout_marginEnd="0dp"
-            android:text="@string/altitude_0"
-            android:textColor="#FF1100" />
-    </RelativeLayout>
+            <LinearLayout
+                android:id="@+id/layout_ILM_Take_Off"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textView_ILM_Take_Off"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/take_off"
+                    android:textColor="@color/black"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btn_ILM_Take_Off"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/ilm_drone_takeoff" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_ILM_Stop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textView_ILM_Stop"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/stop"
+                    android:textColor="@color/black"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btn_ILM_Stop"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/ilm_drone_stop" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_ILM_Land"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textView_ILM_Land"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/land"
+                    android:textColor="@color/black"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btn_ILM_Land"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/ilm_drone_land" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_ILM_GoTo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textView_ILM_GoTo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/go_to"
+                    android:textColor="@color/black"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btn_ILM_GoTo"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/ilm_drone_go_to" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_ILM_Waypoint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textView_ILM_Waypoint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Waypoint"
+                    android:textColor="@color/black"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btn_ILM_Waypoint"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/ilm_waypoint" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_ILM_Enable_VirtualStick"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textView_ILM_Enable_VirtualStick"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Virtual Stick"
+                    android:textColor="@color/black"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btn_ILM_Enable_VirtualStick"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/ilm_drone_virtualstick" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_ILM_Record"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/textView_ILM_Record"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/start_recording"
+                    android:textColor="@color/black"
+                    android:textSize="10sp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/btn_ILM_Record"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/ilm_drone_capture_video_off" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
 
     <org.osmdroid.views.MapView
         android:id="@+id/mapView_ILM"
         titlesource='Mapnik'
-        android:layout_width="259dp"
-        android:layout_height="153dp"
-        android:layout_marginBottom="180dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/video_relativeLaout"
-        app:layout_constraintHorizontal_bias="0.842"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:layout_width="260dp"
+        android:layout_height="155dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="180dp" />
 
     <RelativeLayout
         android:id="@+id/video_relativeLaout"
-        android:layout_width="416dp"
-        android:layout_height="273dp"
-        android:layout_marginEnd="30dp"
-        android:layout_marginBottom="60dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        android:layout_width="420dp"
+        android:layout_height="260dp"
+        android:layout_above="@+id/buttonsScrollView"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="5dp"
+        android:layout_marginBottom="10dp">
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="1dp">
+            android:layout_height="match_parent">
 
             <com.dji.sdk.sample.internal.utils.VideoFeedView
                 android:id="@+id/videoFeedView_ILM"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginTop="0dp"
-                android:layout_marginEnd="1dp" />
+                android:layout_height="match_parent" />
 
             <View
                 android:id="@+id/view_ILM_coverView"
@@ -317,4 +239,4 @@
 
     </RelativeLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</merge>
