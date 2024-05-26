@@ -30,26 +30,16 @@ import java.util.Locale;
 import dji.common.battery.BatteryState;
 import dji.common.flightcontroller.FlightControllerState;
 import dji.common.flightcontroller.LocationCoordinate3D;
+import dji.common.gimbal.GimbalState;
 import dji.sdk.flightcontroller.FlightController;
 import dji.sdk.gimbal.Gimbal;
 
 public class ILMStatusBar extends RelativeLayout implements PresentableView {
     private Context context;
-    private TextView battery;
-    private TextView x;
-    private TextView y;
-    private TextView z;
-    private TextView latitude;
-    private TextView longitude;
-    private TextView altitude;
-    private TextView date;
-    private TextView speed;
-    private TextView distance;
-    private TextView pitch;
-    private TextView roll;
-    private TextView yaw;
+    private TextView battery, speed, x, y, z, pitch, roll, yaw, date, distance, latitude, longitude, altitude;
     private Handler dateUpdateHandler = new Handler();
     private Handler locationUpdateHandler = new Handler();
+
 
     public ILMStatusBar(Context context) {
         super(context);
@@ -65,17 +55,13 @@ public class ILMStatusBar extends RelativeLayout implements PresentableView {
     }
 
     private void initUI() {
+        latitude = findViewById(R.id.textView_ILM_LatitudeInt);
+        longitude = findViewById(R.id.textView_ILM_LongitudeInt);
+        altitude = findViewById(R.id.textView_ILM_AltitudeInt);
 
         x = findViewById(R.id.textView_ILM_XInt);
         y = findViewById(R.id.textView_ILM_YInt);
         z = findViewById(R.id.textView_ILM_ZInt);
-
-        // Inflate the view_ilm_remote_controller layout
-        LayoutInflater remoteControllerInflater = (LayoutInflater) context.getSystemService(Service.LAYOUT_INFLATER_SERVICE);
-        View remoteControllerView = remoteControllerInflater.inflate(R.layout.view_ilm_remote_controller, this, false);
-        latitude = remoteControllerView.findViewById(R.id.textView_ILM_Latitude);
-        longitude = remoteControllerView.findViewById(R.id.textView_ILM_Longitude);
-        altitude = remoteControllerView.findViewById(R.id.textView_ILM_Altitude);
 
         speed = findViewById(R.id.textView_ILM_SpeedInt);
         distance = findViewById(R.id.textView_ILM_DistanceInt);
@@ -83,7 +69,7 @@ public class ILMStatusBar extends RelativeLayout implements PresentableView {
         date = findViewById(R.id.textView_ILM_DateInt);
 
         pitch = findViewById(R.id.textView_ILM_PitchInt);
-        roll = findViewById(R.id.textView_ILM_RollTxt);
+        roll = findViewById(R.id.textView_ILM_RollInt);
         yaw = findViewById(R.id.textView_ILM_YawInt);
     }
 
@@ -202,12 +188,22 @@ public class ILMStatusBar extends RelativeLayout implements PresentableView {
         if (ModuleVerificationUtil.isGimbalModuleAvailable()) {
             Gimbal gimbal = DJISampleApplication.getProductInstance().getGimbal();
             if (gimbal != null) {
-                gimbal.setStateCallback(gimbalState -> {
-                    runOnUiThread(() -> {
-                        pitch.setText(String.valueOf((int) gimbalState.getAttitudeInDegrees().getPitch()));
-                        roll.setText(String.valueOf((int) gimbalState.getAttitudeInDegrees().getRoll()));
-                        yaw.setText(String.valueOf((int) gimbalState.getAttitudeInDegrees().getYaw()));
-                    });
+                gimbal.setStateCallback(new GimbalState.Callback() {
+                    @Override
+                    public void onUpdate(@NonNull GimbalState gimbalState) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                float p = (float) gimbalState.getAttitudeInDegrees().getPitch();
+                                float r = (float) gimbalState.getAttitudeInDegrees().getRoll();
+                                float y = (float) gimbalState.getAttitudeInDegrees().getYaw();
+
+                                pitch.setText(Float.toString(p));
+                                roll.setText(Float.toString(r));
+                                yaw.setText(Float.toString(y));
+                            }
+                        });
+                    }
                 });
             }
         }
@@ -225,10 +221,9 @@ public class ILMStatusBar extends RelativeLayout implements PresentableView {
                         double lon = aircraftLocation.getLongitude();
                         double alt = aircraftLocation.getAltitude();
 
-
-                        latitude.setText("Latitude: " + String.format(Locale.getDefault(), "%.6f", lat));
-                        longitude.setText("Longitude: " + String.format(Locale.getDefault(), "%.6f", lon));
-                        altitude.setText("Altitude: " + String.format(Locale.getDefault(), "%.6f", alt));
+                        latitude.setText(String.format(Locale.getDefault(), "%.6f", lat));
+                        longitude.setText(String.format(Locale.getDefault(), "%.6f", lon));
+                        altitude.setText(String.format(Locale.getDefault(), "%.6f", alt));
                     }
                 }
                 locationUpdateHandler.postDelayed(this, 100);
@@ -254,15 +249,15 @@ public class ILMStatusBar extends RelativeLayout implements PresentableView {
     }
 
     public String getLatitude() {
-        return (latitude.getText()).subSequence(10, latitude.getText().length()).toString();
+        return latitude.getText().toString();
     }
 
     public String getLongitude() {
-        return (longitude.getText()).subSequence(11, longitude.getText().length()).toString();
+        return longitude.getText().toString();
     }
 
     public String getAltitude() {
-        return (altitude.getText()).subSequence(10, altitude.getText().length()).toString();
+        return altitude.getText().toString();
     }
 
     public String getDate() {

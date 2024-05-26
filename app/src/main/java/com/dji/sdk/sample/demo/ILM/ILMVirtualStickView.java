@@ -2,10 +2,12 @@ package com.dji.sdk.sample.demo.ILM;
 
 import android.app.Service;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.dji.sdk.sample.R;
 import com.dji.sdk.sample.internal.OnScreenJoystickListener;
@@ -34,11 +36,12 @@ public class ILMVirtualStickView extends RelativeLayout implements View.OnClickL
     private OnScreenJoystick screenJoystickLeft;
     private Timer sendVirtualStickDataTimer;
     private SendVirtualStickDataTask sendVirtualStickDataTask;
-    private float pitch;
-    private float roll;
-    private float yaw;
-    private float throttle;
+    private float pitch;        // Forward and backward
+    private float roll;         // Side to Side movement
+    private float yaw;          // Rotation of the drone (angle change)
+    private float throttle;     // Up and Down movement
     private FlightController flightController = null;
+    private boolean flag = false;
 
     public ILMVirtualStickView(Context context) {
         super(context);
@@ -90,12 +93,15 @@ public class ILMVirtualStickView extends RelativeLayout implements View.OnClickL
     private void initUI() {
         screenJoystickRight = findViewById(R.id.directionJoystickRight);
         screenJoystickLeft = findViewById(R.id.directionJoystickLeft);
-
         btnDisableVirtualStick = findViewById(R.id.button_ILM_disableVirtualStick);
+
         btnDisableVirtualStick.setOnClickListener(this);
     }
 
     private void setUpListeners() {
+        if (flag) {
+            return;
+        }
         screenJoystickLeft.setJoystickListener(new OnScreenJoystickListener() {
 
             @Override
@@ -112,6 +118,7 @@ public class ILMVirtualStickView extends RelativeLayout implements View.OnClickL
 
                 pitch = pitchJoyControlMaxSpeed * pY;
                 roll = rollJoyControlMaxSpeed * pX;
+                Log.d("TAG", "pitch: " + pitch + " roll: " + roll);
 
                 if (null == sendVirtualStickDataTimer) {
                     sendVirtualStickDataTask = new SendVirtualStickDataTask();
@@ -137,6 +144,7 @@ public class ILMVirtualStickView extends RelativeLayout implements View.OnClickL
 
                 yaw = yawJoyControlMaxSpeed * pX;
                 throttle = verticalJoyControlMaxSpeed * pY;
+                Log.d("TAG", "yaw: " + yaw + " throttle: " + throttle);
 
                 if (null == sendVirtualStickDataTimer) {
                     sendVirtualStickDataTask = new SendVirtualStickDataTask();
@@ -167,6 +175,7 @@ public class ILMVirtualStickView extends RelativeLayout implements View.OnClickL
             });
             ((ILMRemoteControllerView) getParent()).switchToMainLayout();
         }
+        flag = false;
     }
 
 
@@ -179,6 +188,8 @@ public class ILMVirtualStickView extends RelativeLayout implements View.OnClickL
                     public void onResult(DJIError djiError) {
                         if (djiError != null) {
                             ToastUtils.setResultToToast(djiError.getDescription());
+                        } else {
+                            Log.d("SendVirtualStickDataTask", "roll1: " + roll + " pitch1: " + pitch + " yaw1: " + yaw + " throttle1: " + throttle);
                         }
                     }
                 });

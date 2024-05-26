@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/virtualStickRelativeLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
+    tools:context="com.dji.sdk.sample.demo.ILM.ILMVirtualStickView">
 
     <com.dji.sdk.sample.internal.utils.OnScreenJoystick
         android:id="@+id/directionJoystickRight"
@@ -11,8 +12,8 @@
         android:layout_height="150dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="10dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginBottom="30dp"
         android:background="@mipmap/joystick_bg" />
 
     <com.dji.sdk.sample.internal.utils.OnScreenJoystick
@@ -21,8 +22,8 @@
         android:layout_height="150dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginBottom="30dp"
         android:background="@mipmap/joystick_bg" />
 
     <Button
@@ -32,7 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="50dp"
         android:text="Disable Virtual Stick" />
 
 

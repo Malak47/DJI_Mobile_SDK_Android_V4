@@ -2,6 +2,7 @@ package com.dji.sdk.sample.demo.ILM;
 
 import android.content.Context;
 
+import com.bumptech.glide.Glide;
 import com.dji.sdk.sample.R;
 
 import org.osmdroid.views.MapView;
@@ -9,7 +10,9 @@ import org.osmdroid.views.MapView;
 import android.app.Service;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
@@ -30,6 +33,7 @@ public class ILMRemoteControllerView extends RelativeLayout implements View.OnCl
     private ILMCSVLog csvLog;
     private ILMButtons buttons;
     private ILMVirtualStickView virtualStickView;
+    private ILMWaypoints waypoints;
 
     public ILMRemoteControllerView(Context context) {
         super(context);
@@ -43,11 +47,10 @@ public class ILMRemoteControllerView extends RelativeLayout implements View.OnCl
         statusBar = new ILMStatusBar(context);
         addView(statusBar);
         //<<==========================Virtual Stick=========================>>//
-        virtualStickView = new ILMVirtualStickView(context);
-        addView(virtualStickView);
-        virtualStickView.setVisibility(View.INVISIBLE);
-        findViewById(R.id.virtualStickRelativeLayout).setVisibility(View.INVISIBLE);
-        virtualStickView.setClickable(false);
+//        virtualStickView = new ILMVirtualStickView(context);
+//        addView(virtualStickView);
+//        virtualStickView.setVisibility(View.INVISIBLE);
+//        virtualStickView.setClickable(false);
         //<<==============================================================>>//
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Service.LAYOUT_INFLATER_SERVICE);
         layoutInflater.inflate(R.layout.view_ilm_remote_controller, this, true);
@@ -83,26 +86,24 @@ public class ILMRemoteControllerView extends RelativeLayout implements View.OnCl
         buttons.EnableVirtualStickBtn.setOnClickListener(this);
         buttons.panicStopBtn.setOnClickListener(this);
         buttons.RecordBtn.setOnClickListener(this);
+
+        waypoints = new ILMWaypoints(context);
     }
 
     public void switchToVirtualStickLayout() {
+        //findViewById(R.id.buttons_relativeLayout).setClickable(false);
         findViewById(R.id.buttons_relativeLayout).setVisibility(View.INVISIBLE);
-        findViewById(R.id.buttons_relativeLayout).setClickable(true);
-
-        virtualStickView.setVisibility(View.VISIBLE);
-        findViewById(R.id.virtualStickRelativeLayout).setVisibility(View.VISIBLE);
-        virtualStickView.setClickable(true);
+        virtualStickView = new ILMVirtualStickView(context);
+        addView(virtualStickView);
         buttons.EnableVirtualStick();
     }
 
     public void switchToMainLayout() {
-        virtualStickView.setVisibility(View.INVISIBLE);
-        findViewById(R.id.virtualStickRelativeLayout).setVisibility(View.INVISIBLE);
+        removeView(virtualStickView);
 
+        //findViewById(R.id.buttons_relativeLayout).setClickable(true);
         findViewById(R.id.buttons_relativeLayout).setVisibility(View.VISIBLE);
-        findViewById(R.id.buttons_relativeLayout).setClickable(true);
     }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -147,7 +148,13 @@ public class ILMRemoteControllerView extends RelativeLayout implements View.OnCl
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
+        refreshView();
         DJISampleApplication.getEventBus().post(new MainActivity.RequestStartFullScreenEvent());
+    }
+
+    // Refresh the view
+    public void refreshView() {
+        invalidate(); // Invalidate the view, forcing a redraw
     }
 
     @Override
