@@ -14,13 +14,13 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class ILMCSVLog {
+public class ILM_CSVLog {
     private Context context;
     private FileWriter writer;
     private Timer counterTimer;
-    private ILMStatusBar statusBar;
+    private ILM_StatusBar statusBar;
 
-    public ILMCSVLog(Context context, ILMStatusBar statusBar) {
+    public ILM_CSVLog(Context context, ILM_StatusBar statusBar) {
         this.context = context;
         this.statusBar = statusBar;
     }

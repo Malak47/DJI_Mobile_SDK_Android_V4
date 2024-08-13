@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.CountDownTimer;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.dji.sdk.sample.R;
@@ -24,7 +25,7 @@ import dji.common.util.CommonCallbacks.CompletionCallback;
 import dji.sdk.flightcontroller.FlightController;
 import dji.common.mission.waypoint.Waypoint;
 
-public class ILMButtons {
+public class ILM_Buttons {
     private Context context;
     private View view;
     private FlightController flightController = ModuleVerificationUtil.getFlightController();
@@ -34,10 +35,13 @@ public class ILMButtons {
     protected Button stopBtn;
     protected Button landBtn;
     protected Button takeOffBtn;
-    protected Button EnableVirtualStickBtn;
+    protected Button enableVirtualStickBtn;
     protected Button panicStopBtn;
-    protected Button RecordBtn;
-    protected TextView RecordText;
+    protected Button recordBtn;
+    protected Button waypointBtn;
+    protected Button addWaypointBtn;
+    protected Button removeWaypointBtn;
+    protected TextView recordText;
     private CompletionCallback callback = new CompletionCallback() {
         @Override
         public void onResult(DJIError djiError) {
@@ -51,7 +55,7 @@ public class ILMButtons {
     private CountDownTimer recordingTimer;
     private long recordingTimeMillis = 0;
 
-    public ILMButtons(Context context, View view) {
+    public ILM_Buttons(Context context, View view) {
         this.context = context;
         this.view = view;
         initUI();
@@ -62,17 +66,28 @@ public class ILMButtons {
         stopBtn = view.findViewById(R.id.btn_ILM_Stop);
         landBtn = view.findViewById(R.id.btn_ILM_Land);
         takeOffBtn = view.findViewById(R.id.btn_ILM_Take_Off);
-        EnableVirtualStickBtn = view.findViewById(R.id.btn_ILM_Enable_VirtualStick);
+        enableVirtualStickBtn = view.findViewById(R.id.btn_ILM_Enable_VirtualStick);
         panicStopBtn = view.findViewById(R.id.btn_ILM_Panic_Stop);
-        RecordBtn = view.findViewById(R.id.btn_ILM_Record);
-        RecordText = view.findViewById(R.id.textView_ILM_Record);
+        recordBtn = view.findViewById(R.id.btn_ILM_Record);
+        recordText = view.findViewById(R.id.textView_ILM_Record);
+        waypointBtn = view.findViewById(R.id.btn_ILM_Waypoint);
+        addWaypointBtn = view.findViewById(R.id.btn_ILM_AddWaypoint);
+        removeWaypointBtn = view.findViewById(R.id.btn_ILM_RemoveWaypoint);
 
-        RecordBtn.setOnClickListener(new View.OnClickListener() {
+        recordBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 record();
             }
         });
+    }
+
+    protected void addWaypoint() {
+
+    }
+
+    protected void removeWaypoint() {
+
     }
 
     protected void takeOff() {
@@ -125,7 +140,7 @@ public class ILMButtons {
 
         } else {
             stopRecording();
-            RecordText.setText("Start Recording");
+            recordText.setText("Start Recording");
             stopRecordingTimer();
         }
     }
@@ -155,7 +170,7 @@ public class ILMButtons {
     private void updateTimerText() {
         long minutes = (recordingTimeMillis / 1000) / 60;
         long seconds = (recordingTimeMillis / 1000) % 60;
-        RecordText.setText(String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds));
+        recordText.setText(String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds));
     }
 
     protected void startRecording() {
@@ -166,7 +181,7 @@ public class ILMButtons {
                     if (djiError == null) {
                         showToast("Recording started");
                         isRecording = true;
-                        RecordBtn.setBackgroundResource(R.drawable.ilm_drone_capture_video_on);
+                        recordBtn.setBackgroundResource(R.drawable.ilm_drone_capture_video_on);
                     } else {
                         showToast("Failed to start recording: " + djiError.getDescription());
                     }
@@ -185,7 +200,7 @@ public class ILMButtons {
                 if (djiError == null) {
                     showToast("Recording stopped");
                     isRecording = false;
-                    RecordBtn.setBackgroundResource(R.drawable.ilm_drone_capture_video_off);
+                    recordBtn.setBackgroundResource(R.drawable.ilm_drone_capture_video_off);
                 } else {
                     showToast("Failed to stop recording: " + djiError.getDescription());
                 }
@@ -193,6 +208,13 @@ public class ILMButtons {
         });
     }
 
-
+    protected void waypointBtn() {
+        LinearLayout waypointLayout = view.findViewById(R.id.layout_ILM_AddRemoveWaypoint);
+        if (waypointLayout.getVisibility() == View.VISIBLE) {
+            waypointLayout.setVisibility(View.GONE);
+        } else {
+            waypointLayout.setVisibility(View.VISIBLE);
+        }
+    }
 }
 

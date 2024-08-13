@@ -26,6 +26,7 @@
     <!-- ILM -->
     <string name="component_listview_ilm_remote_controller">ILM Remote Controller</string>
     <string name="component_listview_ilm_status_bar">ILM Status Bar</string>
+    <string name="component_listview_ilm_test">ILM TEST</string>
     <string name="longitude">Longitude</string>
     <string name="latitude">Latitude</string>
     <string name="altitude">Altitude</string>

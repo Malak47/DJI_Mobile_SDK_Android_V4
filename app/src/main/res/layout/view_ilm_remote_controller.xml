@@ -1,9 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.dji.sdk.sample.demo.ILM.ILMRemoteControllerView">
+    tools:context="com.dji.sdk.sample.demo.ILM.ILM_RemoteControllerView">
+
+    <TextureView
+        android:id="@+id/video_previewer_surface"
+        android:layout_width="wrap_content"
+        android:layout_height="350dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        />
 
     <ScrollView
         android:id="@+id/buttonsScrollView"
@@ -43,8 +51,9 @@
                     android:id="@+id/textView_ILM_Take_Off"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:background="@color/red"
                     android:text="@string/take_off"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
                     android:textSize="10sp"
                     android:textStyle="bold" />
 
@@ -67,8 +76,9 @@
                     android:id="@+id/textView_ILM_Stop"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:background="@color/red"
                     android:text="@string/stop"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
                     android:textSize="10sp"
                     android:textStyle="bold" />
 
@@ -91,8 +101,9 @@
                     android:id="@+id/textView_ILM_Land"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:background="@color/red"
                     android:text="@string/land"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
                     android:textSize="10sp"
                     android:textStyle="bold" />
 
@@ -115,8 +126,9 @@
                     android:id="@+id/textView_ILM_GoTo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:background="@color/red"
                     android:text="@string/go_to"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
                     android:textSize="10sp"
                     android:textStyle="bold" />
 
@@ -126,6 +138,7 @@
                     android:layout_height="50dp"
                     android:background="@drawable/ilm_drone_go_to" />
             </LinearLayout>
+
 
             <LinearLayout
                 android:id="@+id/layout_ILM_Waypoint"
@@ -139,8 +152,9 @@
                     android:id="@+id/textView_ILM_Waypoint"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:background="@color/red"
                     android:text="Waypoint"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
                     android:textSize="10sp"
                     android:textStyle="bold" />
 
@@ -149,6 +163,65 @@
                     android:layout_width="50dp"
                     android:layout_height="50dp"
                     android:background="@drawable/ilm_waypoint" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_ILM_AddRemoveWaypoint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:id="@+id/layout_ILM_AddWaypoint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/textView_ILM_AddWaypoint"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@color/red"
+                        android:text="Add"
+                        android:textColor="@color/white"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
+
+                    <Button
+                        android:id="@+id/btn_ILM_AddWaypoint"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:background="@drawable/ilm_addwaypoint" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/layout_ILM_RemoveWaypoint"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/textView_ILM_RemoveWaypoint"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@color/red"
+                        android:text="Remove"
+                        android:textColor="@color/white"
+                        android:textSize="10sp"
+                        android:textStyle="bold" />
+
+                    <Button
+                        android:id="@+id/btn_ILM_RemoveWaypoint"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:background="@drawable/ilm_removewaypoint" />
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -163,8 +236,9 @@
                     android:id="@+id/textView_ILM_Enable_VirtualStick"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:background="@color/red"
                     android:text="Virtual Stick"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
                     android:textSize="10sp"
                     android:textStyle="bold" />
 
@@ -187,8 +261,9 @@
                     android:id="@+id/textView_ILM_Record"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:background="@color/red"
                     android:text="@string/start_recording"
-                    android:textColor="@color/black"
+                    android:textColor="@color/white"
                     android:textSize="10sp"
                     android:textStyle="bold" />
 
@@ -202,41 +277,20 @@
         </LinearLayout>
     </ScrollView>
 
-    <org.osmdroid.views.MapView
-        android:id="@+id/mapView_ILM"
-        titlesource='Mapnik'
-        android:layout_width="260dp"
-        android:layout_height="155dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="180dp" />
-
-    <RelativeLayout
-        android:id="@+id/video_relativeLaout"
-        android:layout_width="420dp"
-        android:layout_height="260dp"
-        android:layout_above="@+id/buttonsScrollView"
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/buttonsScrollView"
         android:layout_alignParentEnd="true"
-        android:layout_marginEnd="5dp"
-        android:layout_marginBottom="10dp">
+        android:orientation="vertical">
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
 
-            <com.dji.sdk.sample.internal.utils.VideoFeedView
-                android:id="@+id/videoFeedView_ILM"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+        <org.osmdroid.views.MapView
+            android:id="@+id/mapView_ILM"
+            android:layout_width="240dp"
+            android:layout_height="150dp"
+            android:layout_marginBottom="5dp" />
+    </LinearLayout>
 
-            <View
-                android:id="@+id/view_ILM_coverView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/black"
-                android:visibility="visible" />
-        </FrameLayout>
 
-    </RelativeLayout>
-
-</merge>
+</RelativeLayout>

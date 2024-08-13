@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.dji.sdk.sample.R;
 import com.dji.sdk.sample.internal.OnScreenJoystickListener;
@@ -30,7 +29,7 @@ import dji.common.flightcontroller.virtualstick.YawControlMode;
 import dji.common.util.CommonCallbacks;
 import dji.sdk.flightcontroller.FlightController;
 
-public class ILMVirtualStickView extends RelativeLayout implements View.OnClickListener {
+public class ILM_VirtualStickView extends RelativeLayout implements View.OnClickListener {
     private Button btnDisableVirtualStick;
     private OnScreenJoystick screenJoystickRight;
     private OnScreenJoystick screenJoystickLeft;
@@ -43,7 +42,7 @@ public class ILMVirtualStickView extends RelativeLayout implements View.OnClickL
     private FlightController flightController = null;
     private boolean flag = false;
 
-    public ILMVirtualStickView(Context context) {
+    public ILM_VirtualStickView(Context context) {
         super(context);
         init(context);
     }
@@ -118,7 +117,7 @@ public class ILMVirtualStickView extends RelativeLayout implements View.OnClickL
 
                 pitch = pitchJoyControlMaxSpeed * pY;
                 roll = rollJoyControlMaxSpeed * pX;
-                Log.d("TAG", "pitch: " + pitch + " roll: " + roll);
+//                Log.d("TAG", "pitch: " + pitch + " roll: " + roll);
 
                 if (null == sendVirtualStickDataTimer) {
                     sendVirtualStickDataTask = new SendVirtualStickDataTask();
@@ -144,8 +143,6 @@ public class ILMVirtualStickView extends RelativeLayout implements View.OnClickL
 
                 yaw = yawJoyControlMaxSpeed * pX;
                 throttle = verticalJoyControlMaxSpeed * pY;
-                Log.d("TAG", "yaw: " + yaw + " throttle: " + throttle);
-
                 if (null == sendVirtualStickDataTimer) {
                     sendVirtualStickDataTask = new SendVirtualStickDataTask();
                     sendVirtualStickDataTimer = new Timer();
@@ -173,7 +170,7 @@ public class ILMVirtualStickView extends RelativeLayout implements View.OnClickL
                     DialogUtils.showDialogBasedOnError(getContext(), djiError);
                 }
             });
-            ((ILMRemoteControllerView) getParent()).switchToMainLayout();
+            ((ILM_RemoteControllerView) getParent()).switchToMainLayout();
         }
         flag = false;
     }

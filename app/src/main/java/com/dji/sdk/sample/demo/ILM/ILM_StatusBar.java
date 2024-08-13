@@ -34,14 +34,14 @@ import dji.common.gimbal.GimbalState;
 import dji.sdk.flightcontroller.FlightController;
 import dji.sdk.gimbal.Gimbal;
 
-public class ILMStatusBar extends RelativeLayout implements PresentableView {
+public class ILM_StatusBar extends RelativeLayout implements PresentableView {
     private Context context;
     private TextView battery, speed, x, y, z, pitch, roll, yaw, date, distance, latitude, longitude, altitude;
     private Handler dateUpdateHandler = new Handler();
     private Handler locationUpdateHandler = new Handler();
 
 
-    public ILMStatusBar(Context context) {
+    public ILM_StatusBar(Context context) {
         super(context);
         this.context = context;
         init(context);
@@ -53,6 +53,7 @@ public class ILMStatusBar extends RelativeLayout implements PresentableView {
         layoutInflater.inflate(R.layout.view_ilm_status_bar, this, true);
         initUI();
     }
+
 
     private void initUI() {
         latitude = findViewById(R.id.textView_ILM_LatitudeInt);
@@ -88,6 +89,12 @@ public class ILMStatusBar extends RelativeLayout implements PresentableView {
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         DJISampleApplication.getEventBus().post(new MainActivity.RequestStartFullScreenEvent());
+        updateDateTime();
+        updateBattery();
+        updateSpeed();
+        updateXYZ();
+        updateLatitudeLongitude();
+        updatePitchRollYaw();
     }
 
     @Override
