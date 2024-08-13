@@ -4,7 +4,7 @@
     android:id="@+id/virtualStickRelativeLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.dji.sdk.sample.demo.ILM.ILMVirtualStickView">
+    tools:context="com.dji.sdk.sample.demo.ILM.ILM_VirtualStickView">
 
     <com.dji.sdk.sample.internal.utils.OnScreenJoystick
         android:id="@+id/directionJoystickRight"

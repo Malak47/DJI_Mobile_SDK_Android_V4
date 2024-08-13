@@ -1,41 +1,45 @@
 package com.dji.sdk.sample.demo.ILM;
 
+import static com.google.android.gms.internal.zzahn.runOnUiThread;
+
 import android.content.Context;
 
-import com.bumptech.glide.Glide;
 import com.dji.sdk.sample.R;
 
 import org.osmdroid.views.MapView;
 
 import android.app.Service;
+import android.graphics.SurfaceTexture;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.TextureView;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import com.dji.sdk.sample.internal.controller.DJISampleApplication;
 import com.dji.sdk.sample.internal.controller.MainActivity;
 
-import com.dji.sdk.sample.internal.utils.VideoFeedView;
 import com.dji.sdk.sample.internal.view.PresentableView;
 
-public class ILMRemoteControllerView extends RelativeLayout implements View.OnClickListener, PresentableView {
+import dji.sdk.camera.VideoFeeder;
+import dji.sdk.codec.DJICodecManager;
+
+public class ILM_RemoteControllerView extends RelativeLayout implements TextureView.SurfaceTextureListener, View.OnClickListener, PresentableView {
     private MapView mapView;
     private Context context;
-    private VideoFeedView videoFeedView;
-    private View coverView;
-    private ILMMap mapController;
-    private ILMVideo videoController;
-    private ILMStatusBar statusBar;
-    private ILMCSVLog csvLog;
-    private ILMButtons buttons;
-    private ILMVirtualStickView virtualStickView;
-    private ILMWaypoints waypoints;
+    private ILM_Map mapController;
+    private ILM_StatusBar statusBar;
+    private ILM_CSVLog csvLog;
+    private ILM_Buttons buttons;
+    private ILM_VirtualStickView virtualStickView;
+    protected VideoFeeder.VideoDataListener mReceivedVideoDataListener = null;
+    protected DJICodecManager mCodecManager = null;
+    protected TextureView mVideoSurface = null;
 
-    public ILMRemoteControllerView(Context context) {
+    public ILM_RemoteControllerView(Context context) {
         super(context);
         this.context = context;
         init(context);
@@ -44,32 +48,43 @@ public class ILMRemoteControllerView extends RelativeLayout implements View.OnCl
     private void init(Context context) {
         setClickable(true);
         //<<=====================Status Bar View==========================>>//
-        statusBar = new ILMStatusBar(context);
+        statusBar = new ILM_StatusBar(context);
         addView(statusBar);
         //<<==========================Virtual Stick=========================>>//
-//        virtualStickView = new ILMVirtualStickView(context);
-//        addView(virtualStickView);
-//        virtualStickView.setVisibility(View.INVISIBLE);
-//        virtualStickView.setClickable(false);
+        virtualStickView = new ILM_VirtualStickView(context);
+        addView(virtualStickView);
+        virtualStickView.setVisibility(View.INVISIBLE);
+        virtualStickView.setClickable(false);
         //<<==============================================================>>//
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Service.LAYOUT_INFLATER_SERVICE);
         layoutInflater.inflate(R.layout.view_ilm_remote_controller, this, true);
         initUI();
+
+        mReceivedVideoDataListener = new VideoFeeder.VideoDataListener() {
+
+            @Override
+            public void onReceive(byte[] videoBuffer, int size) {
+                if (mCodecManager != null) {
+                    mCodecManager.sendDataToDecoder(videoBuffer, size);
+                }
+            }
+        };
+
     }
 
     private void initUI() {
         //<<=========================CSV Log==========================>>//
-        csvLog = new ILMCSVLog(context, statusBar);
+        csvLog = new ILM_CSVLog(context, statusBar);
         csvLog.createLogBrain();
         //<<==========================Map==========================>>//
         mapView = findViewById(R.id.mapView_ILM);
-        mapController = new ILMMap(context, mapView);
+        mapController = new ILM_Map(context, mapView);
         mapController.initMap();
         //<<==========================Video==========================>>//
-        videoFeedView = findViewById(R.id.videoFeedView_ILM);
-        coverView = findViewById(R.id.view_ILM_coverView);
-        videoController = new ILMVideo(videoFeedView, coverView);
-        videoController.displayVideo();
+        mVideoSurface = findViewById(R.id.video_previewer_surface);
+        if (null != mVideoSurface) {
+            mVideoSurface.setSurfaceTextureListener(this);
+        }
         //<<==========================Status Bar Updates==========================>>//
         statusBar.updateDateTime();
         statusBar.updateBattery();
@@ -78,22 +93,22 @@ public class ILMRemoteControllerView extends RelativeLayout implements View.OnCl
         statusBar.updateLatitudeLongitude();
         statusBar.updatePitchRollYaw();
         //<<==========================Buttons==========================>>//
-        buttons = new ILMButtons(context, this);
+        buttons = new ILM_Buttons(context, this);
         buttons.takeOffBtn.setOnClickListener(this);
         buttons.stopBtn.setOnClickListener(this);
         buttons.landBtn.setOnClickListener(this);
         buttons.goToBtn.setOnClickListener(this);
-        buttons.EnableVirtualStickBtn.setOnClickListener(this);
+        buttons.enableVirtualStickBtn.setOnClickListener(this);
         buttons.panicStopBtn.setOnClickListener(this);
-        buttons.RecordBtn.setOnClickListener(this);
+        buttons.recordBtn.setOnClickListener(this);
+        buttons.waypointBtn.setOnClickListener(this);
 
-        waypoints = new ILMWaypoints(context);
     }
 
     public void switchToVirtualStickLayout() {
         //findViewById(R.id.buttons_relativeLayout).setClickable(false);
         findViewById(R.id.buttons_relativeLayout).setVisibility(View.INVISIBLE);
-        virtualStickView = new ILMVirtualStickView(context);
+        virtualStickView = new ILM_VirtualStickView(context);
         addView(virtualStickView);
         buttons.EnableVirtualStick();
     }
@@ -104,6 +119,7 @@ public class ILMRemoteControllerView extends RelativeLayout implements View.OnCl
         //findViewById(R.id.buttons_relativeLayout).setClickable(true);
         findViewById(R.id.buttons_relativeLayout).setVisibility(View.VISIBLE);
     }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -128,6 +144,15 @@ public class ILMRemoteControllerView extends RelativeLayout implements View.OnCl
             case R.id.btn_ILM_Record:
                 buttons.isRecording = !buttons.isRecording;
                 buttons.record();
+                break;
+            case R.id.btn_ILM_Waypoint:
+                buttons.waypointBtn();
+                break;
+            case R.id.btn_ILM_AddWaypoint:
+                buttons.addWaypoint();
+                break;
+            case R.id.btn_ILM_RemoveWaypoint:
+                buttons.removeWaypoint();
                 break;
             default:
                 break;
@@ -159,10 +184,44 @@ public class ILMRemoteControllerView extends RelativeLayout implements View.OnCl
 
     @Override
     protected void onDetachedFromWindow() {
-        csvLog.closeLogBrain();     //Closing CSV
+        if (csvLog != null)
+            csvLog.closeLogBrain();     //Closing CSV
         DJISampleApplication.getEventBus().post(new MainActivity.RequestEndFullScreenEvent());
         super.onDetachedFromWindow();
     }
 
+    @Override
+    public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+        if (mCodecManager == null) {
+            mCodecManager = new DJICodecManager(this.getContext(), surface, width, height);
+        }
+    }
+
+    @Override
+    public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+    }
+
+    @Override
+    public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+        if (mCodecManager != null) {
+            mCodecManager.cleanSurface();
+            mCodecManager = null;
+        }
+
+        return false;
+    }
+
+    @Override
+    public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+    }
+
+    public void showToast(final String msg) {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 }
+
 
