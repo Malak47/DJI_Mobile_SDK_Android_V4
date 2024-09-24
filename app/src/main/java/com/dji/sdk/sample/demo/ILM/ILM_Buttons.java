@@ -8,12 +8,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dji.sdk.sample.R;
 
 import com.dji.sdk.sample.internal.controller.DJISampleApplication;
 import com.dji.sdk.sample.internal.utils.DialogUtils;
 import com.dji.sdk.sample.internal.utils.ModuleVerificationUtil;
+import com.dji.sdk.sample.internal.utils.ToastUtils;
 
 import java.util.Locale;
 
@@ -24,11 +26,14 @@ import dji.common.util.CommonCallbacks;
 import dji.common.util.CommonCallbacks.CompletionCallback;
 import dji.sdk.flightcontroller.FlightController;
 import dji.common.mission.waypoint.Waypoint;
+import dji.sdk.gimbal.Gimbal;
+import dji.sdk.sdkmanager.DJISDKManager;
 
 public class ILM_Buttons {
     private Context context;
     private View view;
     private FlightController flightController = ModuleVerificationUtil.getFlightController();
+    private ILM_AdjustCamera cameraAdjust = new ILM_AdjustCamera();
     private Waypoint waypoint = new Waypoint();
     protected boolean isRecording = false;
     protected Button goToBtn;
@@ -41,14 +46,21 @@ public class ILM_Buttons {
     protected Button waypointBtn;
     protected Button addWaypointBtn;
     protected Button removeWaypointBtn;
+    protected Button cameraAdjustBtn;
+    protected Button adjustPitchPlusBtn, adjustPitchMinusBtn, adjustRollPlusBtn, adjustRollMinusBtn, adjustYawPlusBtn, adjustYawMinusBtn;
+    private int pitch_adjust = 0;
+    private int yaw_adjust = 0;
+    private int roll_adjust = 0;
     protected TextView recordText;
     private CompletionCallback callback = new CompletionCallback() {
         @Override
         public void onResult(DJIError djiError) {
             if (djiError == null) {
-                DialogUtils.showDialog(context, context.getResources().getString(R.string.success));
+                ToastUtils.setResultToToast(context.getResources().getString(R.string.success));
+//                DialogUtils.showDialog(context, context.getResources().getString(R.string.success));
             } else {
-                DialogUtils.showDialog(context, djiError.getDescription());
+                ToastUtils.setResultToToast(djiError.getDescription());
+//                DialogUtils.showDialog(context, djiError.getDescription());
             }
         }
     };
@@ -73,6 +85,14 @@ public class ILM_Buttons {
         waypointBtn = view.findViewById(R.id.btn_ILM_Waypoint);
         addWaypointBtn = view.findViewById(R.id.btn_ILM_AddWaypoint);
         removeWaypointBtn = view.findViewById(R.id.btn_ILM_RemoveWaypoint);
+
+        cameraAdjustBtn = view.findViewById(R.id.btn_ILM_CameraAdjust);
+        adjustPitchPlusBtn = view.findViewById(R.id.btn_ILM_AdjustPitchPlus);
+        adjustPitchMinusBtn = view.findViewById(R.id.btn_ILM_AdjustPitchMinus);
+        adjustRollPlusBtn = view.findViewById(R.id.btn_ILM_AdjustRollPlus);
+        adjustRollMinusBtn = view.findViewById(R.id.btn_ILM_AdjustRollMinus);
+        adjustYawPlusBtn = view.findViewById(R.id.btn_ILM_AdjustYawPlus);
+        adjustYawMinusBtn = view.findViewById(R.id.btn_ILM_AdjustYawMinus);
 
         recordBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,7 +148,8 @@ public class ILM_Buttons {
             @Override
             public void onResult(DJIError djiError) {
                 flightController.setVirtualStickAdvancedModeEnabled(true);
-                DialogUtils.showDialogBasedOnError(context, djiError);
+                ToastUtils.setResultToToast(djiError.toString());
+//                DialogUtils.showDialogBasedOnError(context, djiError);
             }
         });
     }
@@ -214,6 +235,47 @@ public class ILM_Buttons {
             waypointLayout.setVisibility(View.GONE);
         } else {
             waypointLayout.setVisibility(View.VISIBLE);
+        }
+    }
+
+    protected void cameraAdjustVisibility() {
+        LinearLayout cameraAdjustLayout = view.findViewById(R.id.layout_ILM_AdjustPitchRollYaw);
+        if (cameraAdjustLayout.getVisibility() == View.VISIBLE) {
+            cameraAdjustLayout.setVisibility(View.GONE);
+        } else {
+            cameraAdjustLayout.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void cameraAdjust(String str, char symbol) {
+        Gimbal gimbal = DJISDKManager.getInstance().getProduct().getGimbal();
+        if (gimbal != null) {
+            switch (str) {
+                case "yaw":
+                    if (symbol == '+') {
+                        yaw_adjust += 1;
+                    } else if (symbol == '-') {
+                        yaw_adjust -= 1;
+                    }
+                    cameraAdjust.setYaw(yaw_adjust);
+                    break;
+                case "roll":
+                    if (symbol == '+') {
+                        roll_adjust += 1;
+                    } else if (symbol == '-') {
+                        roll_adjust -= 1;
+                    }
+                    cameraAdjust.setRoll(roll_adjust);
+                    break;
+                case "pitch":
+                    if (symbol == '+') {
+                        pitch_adjust += 1;
+                    } else if (symbol == '-') {
+                        pitch_adjust -= 1;
+                    }
+                    cameraAdjust.setPitch(pitch_adjust);
+                    break;
+            }
         }
     }
 }

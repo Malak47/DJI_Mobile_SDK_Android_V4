@@ -394,6 +394,7 @@
     <string name="add_waypoint">Add Waypoint</string>
     <string name="repeat_route">Repeat Route</string>
     <string name="start_recording">Start Recording</string>
+    <string name="camera_adjust">Camera Adjust</string>
 
 
 </resources>

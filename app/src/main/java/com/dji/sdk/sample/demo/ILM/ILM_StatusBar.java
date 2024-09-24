@@ -10,7 +10,6 @@ import android.app.Service;
 
 import android.os.Handler;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -34,76 +33,12 @@ import dji.common.gimbal.GimbalState;
 import dji.sdk.flightcontroller.FlightController;
 import dji.sdk.gimbal.Gimbal;
 
-public class ILM_StatusBar extends RelativeLayout implements PresentableView {
-    private Context context;
-    private TextView battery, speed, x, y, z, pitch, roll, yaw, date, distance, latitude, longitude, altitude;
+public class ILM_StatusBar {
+    private String battery, speed, x, y, z, pitch, roll, yaw, date, distance, latitude, longitude, altitude;
     private Handler dateUpdateHandler = new Handler();
     private Handler locationUpdateHandler = new Handler();
 
-
-    public ILM_StatusBar(Context context) {
-        super(context);
-        this.context = context;
-        init(context);
-    }
-
-    private void init(Context context) {
-        setClickable(true);
-        LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Service.LAYOUT_INFLATER_SERVICE);
-        layoutInflater.inflate(R.layout.view_ilm_status_bar, this, true);
-        initUI();
-    }
-
-
-    private void initUI() {
-        latitude = findViewById(R.id.textView_ILM_LatitudeInt);
-        longitude = findViewById(R.id.textView_ILM_LongitudeInt);
-        altitude = findViewById(R.id.textView_ILM_AltitudeInt);
-
-        x = findViewById(R.id.textView_ILM_XInt);
-        y = findViewById(R.id.textView_ILM_YInt);
-        z = findViewById(R.id.textView_ILM_ZInt);
-
-        speed = findViewById(R.id.textView_ILM_SpeedInt);
-        distance = findViewById(R.id.textView_ILM_DistanceInt);
-        battery = findViewById(R.id.textView_ILM_BatteryInt);
-        date = findViewById(R.id.textView_ILM_DateInt);
-
-        pitch = findViewById(R.id.textView_ILM_PitchInt);
-        roll = findViewById(R.id.textView_ILM_RollInt);
-        yaw = findViewById(R.id.textView_ILM_YawInt);
-    }
-
-    @Override
-    public int getDescription() {
-        return R.string.component_listview_ilm_status_bar;
-    }
-
-    @NonNull
-    @Override
-    public String getHint() {
-        return this.getClass().getSimpleName() + ".java";
-    }
-
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        DJISampleApplication.getEventBus().post(new MainActivity.RequestStartFullScreenEvent());
-        updateDateTime();
-        updateBattery();
-        updateSpeed();
-        updateXYZ();
-        updateLatitudeLongitude();
-        updatePitchRollYaw();
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        DJISampleApplication.getEventBus().post(new MainActivity.RequestEndFullScreenEvent());
-        super.onDetachedFromWindow();
-    }
-
-    public void updateDateTime() {
+    public void updateDateTime(TextView date) {
         DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy, HH:mm:ss", Locale.getDefault());
         Runnable updateTimeRunnable = new Runnable() {
             @Override
@@ -111,6 +46,7 @@ public class ILM_StatusBar extends RelativeLayout implements PresentableView {
                 String formattedDateTime = dateFormat.format(new Date());
                 if (date != null) {
                     date.setText(formattedDateTime);
+                    setDate(date.toString());
                 }
                 dateUpdateHandler.postDelayed(this, 1000);
             }
@@ -118,7 +54,7 @@ public class ILM_StatusBar extends RelativeLayout implements PresentableView {
         updateTimeRunnable.run();
     }
 
-    public void updateBattery() {
+    public void updateBattery(TextView battery) {
         DJISampleApplication.getProductInstance().getBattery().setStateCallback(new BatteryState.Callback() {
             @Override
             public void onUpdate(BatteryState djiBatteryState) {
@@ -128,7 +64,7 @@ public class ILM_StatusBar extends RelativeLayout implements PresentableView {
                         @Override
                         public void run() {
                             battery.setText(String.valueOf(batteryPercentage) + "%");
-
+                            setBattery(battery.toString());
                         }
                     });
                 }
@@ -136,7 +72,7 @@ public class ILM_StatusBar extends RelativeLayout implements PresentableView {
         });
     }
 
-    public void updateSpeed() {
+    public void updateSpeed(TextView speed) {
         final DecimalFormat decimalFormat = new DecimalFormat("0.0");
 
         if (ModuleVerificationUtil.isFlightControllerAvailable()) {
@@ -152,6 +88,7 @@ public class ILM_StatusBar extends RelativeLayout implements PresentableView {
                             @Override
                             public void run() {
                                 speed.setText(speedVal + "m/s");
+                                setSpeed(speed.toString());
                             }
                         });
                     }
@@ -160,7 +97,7 @@ public class ILM_StatusBar extends RelativeLayout implements PresentableView {
         }
     }
 
-    public void updateXYZ() {
+    public void updateXYZ(TextView x, TextView y, TextView z) {
         final DecimalFormat decimalFormat = new DecimalFormat("0.00000");
 
         if (ModuleVerificationUtil.isFlightControllerAvailable()) {
@@ -183,6 +120,10 @@ public class ILM_StatusBar extends RelativeLayout implements PresentableView {
                                 x.setText(formattedVelocityX);
                                 y.setText(formattedVelocityY);
                                 z.setText(formattedVelocityZ);
+
+                                setX(x.toString());
+                                setY(y.toString());
+                                setZ(z.toString());
                             }
                         });
                     }
@@ -191,7 +132,7 @@ public class ILM_StatusBar extends RelativeLayout implements PresentableView {
         }
     }
 
-    public void updatePitchRollYaw() {
+    public void updatePitchRollYaw(TextView pitch, TextView roll, TextView yaw) {
         if (ModuleVerificationUtil.isGimbalModuleAvailable()) {
             Gimbal gimbal = DJISampleApplication.getProductInstance().getGimbal();
             if (gimbal != null) {
@@ -208,6 +149,10 @@ public class ILM_StatusBar extends RelativeLayout implements PresentableView {
                                 pitch.setText(Float.toString(p));
                                 roll.setText(Float.toString(r));
                                 yaw.setText(Float.toString(y));
+
+                                setPitch(pitch.toString());
+                                setRoll(roll.toString());
+                                setYaw(yaw.toString());
                             }
                         });
                     }
@@ -216,7 +161,7 @@ public class ILM_StatusBar extends RelativeLayout implements PresentableView {
         }
     }
 
-    public void updateLatitudeLongitude() {
+    public void updateLatitudeLongitudeAltitude(TextView latitude, TextView longitude, TextView altitude) {
         FlightController flightController = ModuleVerificationUtil.getFlightController();
         Runnable updateTimeRunnable = new Runnable() {
             @Override
@@ -227,10 +172,13 @@ public class ILM_StatusBar extends RelativeLayout implements PresentableView {
                         double lat = aircraftLocation.getLatitude();
                         double lon = aircraftLocation.getLongitude();
                         double alt = aircraftLocation.getAltitude();
-
                         latitude.setText(String.format(Locale.getDefault(), "%.6f", lat));
                         longitude.setText(String.format(Locale.getDefault(), "%.6f", lon));
                         altitude.setText(String.format(Locale.getDefault(), "%.6f", alt));
+
+                        setLatitude(latitude.toString());
+                        setLongitude(longitude.toString());
+                        setAltitude(altitude.toString());
                     }
                 }
                 locationUpdateHandler.postDelayed(this, 100);
@@ -240,55 +188,106 @@ public class ILM_StatusBar extends RelativeLayout implements PresentableView {
     }
 
     public String getBattery() {
-        return battery.getText().toString();
+        return battery;
     }
 
     public String getILMX() {
-        return x.getText().toString();
+        return x;
     }
 
     public String getILMY() {
-        return y.getText().toString();
+        return y;
     }
 
     public String getILMZ() {
-        return z.getText().toString();
+        return z;
     }
 
     public String getLatitude() {
-        return latitude.getText().toString();
+        return latitude;
     }
 
     public String getLongitude() {
-        return longitude.getText().toString();
+        return longitude;
     }
 
     public String getAltitude() {
-        return altitude.getText().toString();
+        return altitude;
     }
 
     public String getDate() {
-        return date.getText().toString();
+        return date;
     }
 
     public String getSpeed() {
-        return speed.getText().toString();
+        return speed;
     }
 
     public String getDistance() {
-        return distance.getText().toString();
+        return distance;
     }
 
     public String getPitch() {
-        return pitch.getText().toString();
+        return pitch;
     }
 
     public String getRoll() {
-        return roll.getText().toString();
+        return roll;
     }
 
     public String getYaw() {
-        return yaw.getText().toString();
+        return yaw;
     }
 
+    public void setBattery(String battery) {
+        this.battery = battery;
+    }
+
+    public void setSpeed(String speed) {
+        this.speed = speed;
+    }
+
+    public void setX(String x) {
+        this.x = x;
+    }
+
+    public void setY(String y) {
+        this.y = y;
+    }
+
+    public void setZ(String z) {
+        this.z = z;
+    }
+
+    public void setPitch(String pitch) {
+        this.pitch = pitch;
+    }
+
+    public void setRoll(String roll) {
+        this.roll = roll;
+    }
+
+    public void setYaw(String yaw) {
+        this.yaw = yaw;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public void setDistance(String distance) {
+        this.distance = distance;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
+    public void setAltitude(String altitude) {
+        this.altitude = altitude;
+    }
 }

@@ -202,7 +202,8 @@ public class MobileRemoteControllerView extends RelativeLayout
                 flightController.startTakeoff(new CompletionCallback() {
                     @Override
                     public void onResult(DJIError djiError) {
-                        DialogUtils.showDialogBasedOnError(getContext(), djiError);
+                        ToastUtils.setResultToToast(djiError.getDescription());
+//                        DialogUtils.showDialogBasedOnError(getContext(), djiError);
                     }
                 });
                 break;
@@ -210,7 +211,8 @@ public class MobileRemoteControllerView extends RelativeLayout
                 flightController.confirmLanding(new CompletionCallback() {
                     @Override
                     public void onResult(DJIError djiError) {
-                        DialogUtils.showDialogBasedOnError(getContext(), djiError);
+                        ToastUtils.setResultToToast(djiError.getDescription());
+//                        DialogUtils.showDialogBasedOnError(getContext(), djiError);
                     }
                 });
                 break;
@@ -218,7 +220,8 @@ public class MobileRemoteControllerView extends RelativeLayout
                 flightController.startLanding(new CompletionCallback() {
                     @Override
                     public void onResult(DJIError djiError) {
-                        DialogUtils.showDialogBasedOnError(getContext(), djiError);
+                        ToastUtils.setResultToToast(djiError.getDescription());
+//                        DialogUtils.showDialogBasedOnError(getContext(), djiError);
                     }
                 });
                 break;
