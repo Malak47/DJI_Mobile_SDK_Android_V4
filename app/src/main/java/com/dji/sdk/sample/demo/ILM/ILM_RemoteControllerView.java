@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.TextureView;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -38,6 +39,7 @@ public class ILM_RemoteControllerView extends RelativeLayout implements TextureV
     protected VideoFeeder.VideoDataListener mReceivedVideoDataListener = null;
     protected DJICodecManager mCodecManager = null;
     protected TextureView mVideoSurface = null;
+    private TextView battery, speed, x, y, z, pitch, roll, yaw, date, distance, latitude, longitude, altitude;
 
     public ILM_RemoteControllerView(Context context) {
         super(context);
@@ -48,8 +50,7 @@ public class ILM_RemoteControllerView extends RelativeLayout implements TextureV
     private void init(Context context) {
         setClickable(true);
         //<<=====================Status Bar View==========================>>//
-        statusBar = new ILM_StatusBar(context);
-        addView(statusBar);
+        statusBar = new ILM_StatusBar();
         //<<==========================Virtual Stick=========================>>//
         virtualStickView = new ILM_VirtualStickView(context);
         addView(virtualStickView);
@@ -69,7 +70,6 @@ public class ILM_RemoteControllerView extends RelativeLayout implements TextureV
                 }
             }
         };
-
     }
 
     private void initUI() {
@@ -85,13 +85,30 @@ public class ILM_RemoteControllerView extends RelativeLayout implements TextureV
         if (null != mVideoSurface) {
             mVideoSurface.setSurfaceTextureListener(this);
         }
+        //<<==========================Status Bar==========================>>//
+        latitude = findViewById(R.id.textView_ILM_LatitudeInt1);
+        longitude = findViewById(R.id.textView_ILM_LongitudeInt1);
+        altitude = findViewById(R.id.textView_ILM_AltitudeInt1);
+
+        x = findViewById(R.id.textView_ILM_XInt1);
+        y = findViewById(R.id.textView_ILM_YInt1);
+        z = findViewById(R.id.textView_ILM_ZInt1);
+
+        speed = findViewById(R.id.textView_ILM_SpeedInt1);
+        distance = findViewById(R.id.textView_ILM_DistanceInt1);
+        battery = findViewById(R.id.textView_ILM_BatteryInt1);
+        date = findViewById(R.id.textView_ILM_DateInt1);
+
+        pitch = findViewById(R.id.textView_ILM_PitchInt1);
+        roll = findViewById(R.id.textView_ILM_RollInt1);
+        yaw = findViewById(R.id.textView_ILM_YawInt1);
         //<<==========================Status Bar Updates==========================>>//
-        statusBar.updateDateTime();
-        statusBar.updateBattery();
-        statusBar.updateSpeed();
-        statusBar.updateXYZ();
-        statusBar.updateLatitudeLongitude();
-        statusBar.updatePitchRollYaw();
+        statusBar.updateDateTime(date);
+        statusBar.updateBattery(battery);
+        statusBar.updateSpeed(speed);
+        statusBar.updateXYZ(x, y, z);
+        statusBar.updateLatitudeLongitudeAltitude(latitude, longitude, altitude);
+        statusBar.updatePitchRollYaw(pitch, roll, yaw);
         //<<==========================Buttons==========================>>//
         buttons = new ILM_Buttons(context, this);
         buttons.takeOffBtn.setOnClickListener(this);
@@ -102,6 +119,14 @@ public class ILM_RemoteControllerView extends RelativeLayout implements TextureV
         buttons.panicStopBtn.setOnClickListener(this);
         buttons.recordBtn.setOnClickListener(this);
         buttons.waypointBtn.setOnClickListener(this);
+
+        buttons.cameraAdjustBtn.setOnClickListener(this);
+        buttons.adjustPitchPlusBtn.setOnClickListener(this);
+        buttons.adjustPitchMinusBtn.setOnClickListener(this);
+        buttons.adjustRollPlusBtn.setOnClickListener(this);
+        buttons.adjustRollMinusBtn.setOnClickListener(this);
+        buttons.adjustYawPlusBtn.setOnClickListener(this);
+        buttons.adjustYawMinusBtn.setOnClickListener(this);
 
     }
 
@@ -153,6 +178,33 @@ public class ILM_RemoteControllerView extends RelativeLayout implements TextureV
                 break;
             case R.id.btn_ILM_RemoveWaypoint:
                 buttons.removeWaypoint();
+                break;
+            case R.id.btn_ILM_CameraAdjust:
+                buttons.cameraAdjustVisibility();
+                break;
+            case R.id.btn_ILM_AdjustPitchPlus:
+                buttons.cameraAdjust("pitch", '+');
+                Log.e("AdjustPitchPlus", "AdjustPitchPlus");
+                break;
+            case R.id.btn_ILM_AdjustPitchMinus:
+                buttons.cameraAdjust("pitch", '-');
+                Log.e("AdjustPitchMinus", "AdjustPitchMinus");
+                break;
+            case R.id.btn_ILM_AdjustRollPlus:
+                buttons.cameraAdjust("roll", '+');
+                Log.e("AdjustRollPlus", "AdjustRollPlus");
+                break;
+            case R.id.btn_ILM_AdjustRollMinus:
+                buttons.cameraAdjust("roll", '-');
+                Log.e("AdjustRollMinus", "AdjustRollMinus");
+                break;
+            case R.id.btn_ILM_AdjustYawPlus:
+                buttons.cameraAdjust("yaw", '+');
+                Log.e("AdjustYawPlus", "AdjustYawPlus");
+                break;
+            case R.id.btn_ILM_AdjustYawMinus:
+                buttons.cameraAdjust("yaw", '-');
+                Log.e("AdjustYawMinus", "AdjustYawMinus");
                 break;
             default:
                 break;
@@ -207,7 +259,6 @@ public class ILM_RemoteControllerView extends RelativeLayout implements TextureV
             mCodecManager.cleanSurface();
             mCodecManager = null;
         }
-
         return false;
     }
 

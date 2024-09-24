@@ -9,10 +9,10 @@ import dji.sdk.base.BaseProduct;
 import dji.sdk.camera.VideoFeeder;
 import dji.sdk.sdkmanager.DJISDKManager;
 
-public class ILMVideo {
+public class ILM_Video {
     private final VideoFeedView videoFeedView;
 
-    public ILMVideo(VideoFeedView videoFeedView, View coverView) {
+    public ILM_Video(VideoFeedView videoFeedView, View coverView) {
         this.videoFeedView = videoFeedView;
         this.videoFeedView.setCoverView(coverView);
     }

@@ -255,7 +255,8 @@ public class VirtualStickView extends RelativeLayout implements View.OnClickList
                     @Override
                     public void onResult(DJIError djiError) {
                         flightController.setVirtualStickAdvancedModeEnabled(true);
-                        DialogUtils.showDialogBasedOnError(getContext(), djiError);
+                        ToastUtils.setResultToToast(djiError.getDescription());
+//                        DialogUtils.showDialogBasedOnError(getContext(), djiError);
                     }
                 });
                 break;
@@ -264,7 +265,8 @@ public class VirtualStickView extends RelativeLayout implements View.OnClickList
                 flightController.setVirtualStickModeEnabled(false, new CommonCallbacks.CompletionCallback() {
                     @Override
                     public void onResult(DJIError djiError) {
-                        DialogUtils.showDialogBasedOnError(getContext(), djiError);
+                        ToastUtils.setResultToToast(djiError.getDescription());
+//                        DialogUtils.showDialogBasedOnError(getContext(), djiError);
                     }
                 });
                 break;
@@ -305,7 +307,8 @@ public class VirtualStickView extends RelativeLayout implements View.OnClickList
                 flightController.startTakeoff(new CommonCallbacks.CompletionCallback() {
                     @Override
                     public void onResult(DJIError djiError) {
-                        DialogUtils.showDialogBasedOnError(getContext(), djiError);
+                        ToastUtils.setResultToToast(djiError.getDescription());
+//                        DialogUtils.showDialogBasedOnError(getContext(), djiError);
                     }
                 });
                 break;

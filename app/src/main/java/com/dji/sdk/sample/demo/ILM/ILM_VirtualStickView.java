@@ -167,7 +167,8 @@ public class ILM_VirtualStickView extends RelativeLayout implements View.OnClick
             flightController.setVirtualStickModeEnabled(false, new CommonCallbacks.CompletionCallback() {
                 @Override
                 public void onResult(DJIError djiError) {
-                    DialogUtils.showDialogBasedOnError(getContext(), djiError);
+                    ToastUtils.setResultToToast(djiError.getDescription());
+//                    DialogUtils.showDialogBasedOnError(getContext(), djiError);
                 }
             });
             ((ILM_RemoteControllerView) getParent()).switchToMainLayout();
@@ -186,7 +187,7 @@ public class ILM_VirtualStickView extends RelativeLayout implements View.OnClick
                         if (djiError != null) {
                             ToastUtils.setResultToToast(djiError.getDescription());
                         } else {
-                            Log.d("SendVirtualStickDataTask", "roll1: " + roll + " pitch1: " + pitch + " yaw1: " + yaw + " throttle1: " + throttle);
+//                            Log.d("SendVirtualStickDataTask", "roll1: " + roll + " pitch1: " + pitch + " yaw1: " + yaw + " throttle1: " + throttle);
                         }
                     }
                 });
