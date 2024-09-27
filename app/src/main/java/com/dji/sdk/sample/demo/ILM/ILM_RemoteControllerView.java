@@ -31,7 +31,7 @@ import dji.sdk.codec.DJICodecManager;
 public class ILM_RemoteControllerView extends RelativeLayout implements TextureView.SurfaceTextureListener, View.OnClickListener, PresentableView {
     private MapView mapView;
     private Context context;
-    private ILM_Map mapController;
+    private ILM_MapController mapController;
     private ILM_StatusBar statusBar;
     private ILM_CSVLog csvLog;
     private ILM_Buttons buttons;
@@ -40,6 +40,10 @@ public class ILM_RemoteControllerView extends RelativeLayout implements TextureV
     protected DJICodecManager mCodecManager = null;
     protected TextureView mVideoSurface = null;
     private TextView battery, speed, x, y, z, pitch, roll, yaw, date, distance, latitude, longitude, altitude;
+
+    private ILM_Missions missions;
+    private ILM_Waypoints waypoints;
+    private ILM_AllWaypoints allWaypoints;
 
     public ILM_RemoteControllerView(Context context) {
         super(context);
@@ -54,7 +58,7 @@ public class ILM_RemoteControllerView extends RelativeLayout implements TextureV
         //<<==========================Virtual Stick=========================>>//
         virtualStickView = new ILM_VirtualStickView(context);
         addView(virtualStickView);
-        virtualStickView.setVisibility(View.INVISIBLE);
+        virtualStickView.setVisibility(View.GONE);
         virtualStickView.setClickable(false);
         //<<==============================================================>>//
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Service.LAYOUT_INFLATER_SERVICE);
@@ -78,8 +82,8 @@ public class ILM_RemoteControllerView extends RelativeLayout implements TextureV
         csvLog.createLogBrain();
         //<<==========================Map==========================>>//
         mapView = findViewById(R.id.mapView_ILM);
-        mapController = new ILM_Map(context, mapView);
-        mapController.initMap();
+        mapController = new ILM_MapController(context, mapView);
+        mapController.init();
         //<<==========================Video==========================>>//
         mVideoSurface = findViewById(R.id.video_previewer_surface);
         if (null != mVideoSurface) {
@@ -109,14 +113,23 @@ public class ILM_RemoteControllerView extends RelativeLayout implements TextureV
         statusBar.updateXYZ(x, y, z);
         statusBar.updateLatitudeLongitudeAltitude(latitude, longitude, altitude);
         statusBar.updatePitchRollYaw(pitch, roll, yaw);
+
+        //<<==========================Waypoints==========================>>//<
+        waypoints = new ILM_Waypoints(context, statusBar);
+        waypoints.createLogBrain();
+
+        allWaypoints = new ILM_AllWaypoints(context, statusBar);
         //<<==========================Buttons==========================>>//
         buttons = new ILM_Buttons(context, this);
+
+        buttons.returnToHomeBtn.setOnClickListener(this);
+
         buttons.takeOffBtn.setOnClickListener(this);
         buttons.stopBtn.setOnClickListener(this);
         buttons.landBtn.setOnClickListener(this);
         buttons.goToBtn.setOnClickListener(this);
         buttons.enableVirtualStickBtn.setOnClickListener(this);
-        buttons.panicStopBtn.setOnClickListener(this);
+//        buttons.panicStopBtn.setOnClickListener(this);
         buttons.recordBtn.setOnClickListener(this);
         buttons.waypointBtn.setOnClickListener(this);
 
@@ -128,6 +141,35 @@ public class ILM_RemoteControllerView extends RelativeLayout implements TextureV
         buttons.adjustYawPlusBtn.setOnClickListener(this);
         buttons.adjustYawMinusBtn.setOnClickListener(this);
 
+        buttons.addWaypointBtn.setOnClickListener(this);
+        buttons.removeWaypointBtn.setOnClickListener(this);
+
+        buttons.repeatRouteBtn.setOnClickListener(this);
+
+        buttons.missionsBtn.setOnClickListener(this);
+        buttons.mission1Btn.setOnClickListener(this);
+        buttons.mission2Btn.setOnClickListener(this);
+        buttons.mission3Btn.setOnClickListener(this);
+
+        buttons.waypointsBtn.setOnClickListener(this);
+        buttons.waypoint1Btn.setOnClickListener(this);
+        buttons.waypoint2Btn.setOnClickListener(this);
+        buttons.waypoint3Btn.setOnClickListener(this);
+        buttons.waypoint4Btn.setOnClickListener(this);
+        buttons.waypoint5Btn.setOnClickListener(this);
+        buttons.waypoint6Btn.setOnClickListener(this);
+        buttons.waypoint7Btn.setOnClickListener(this);
+        buttons.waypoint8Btn.setOnClickListener(this);
+
+        missions = new ILM_Missions(getContext(), statusBar, mapController);
+        addMissions();
+
+    }
+
+    private void addMissions() {
+        for (int i = 0; i < 3; i++) {
+            missions.addMission();
+        }
     }
 
     public void switchToVirtualStickLayout() {
@@ -158,14 +200,17 @@ public class ILM_RemoteControllerView extends RelativeLayout implements TextureV
                 buttons.land();
                 break;
             case R.id.btn_ILM_GoTo:
-                buttons.goTo();
+                buttons.goTo(waypoints, mapController);
+                break;
+            case R.id.btn_ILM_RepeatRoute:
+                buttons.RepeatRoute(waypoints, mapController);
                 break;
             case R.id.btn_ILM_Enable_VirtualStick:
                 switchToVirtualStickLayout();
                 break;
-            case R.id.btn_ILM_Panic_Stop:
-                buttons.panicStop();
-                break;
+//            case R.id.btn_ILM_Panic_Stop:
+//                buttons.panicStop();
+//                break;
             case R.id.btn_ILM_Record:
                 buttons.isRecording = !buttons.isRecording;
                 buttons.record();
@@ -174,10 +219,10 @@ public class ILM_RemoteControllerView extends RelativeLayout implements TextureV
                 buttons.waypointBtn();
                 break;
             case R.id.btn_ILM_AddWaypoint:
-                buttons.addWaypoint();
+                buttons.addWaypoint(waypoints, mapController, allWaypoints);
                 break;
             case R.id.btn_ILM_RemoveWaypoint:
-                buttons.removeWaypoint();
+                buttons.removeWaypoint(waypoints, mapController);
                 break;
             case R.id.btn_ILM_CameraAdjust:
                 buttons.cameraAdjustVisibility();
@@ -206,6 +251,64 @@ public class ILM_RemoteControllerView extends RelativeLayout implements TextureV
                 buttons.cameraAdjust("yaw", '-');
                 Log.e("AdjustYawMinus", "AdjustYawMinus");
                 break;
+            case R.id.btn_ILM_ReturnToHome:
+                buttons.returnToHome();
+                break;
+            case R.id.btn_ILM_Missions:
+                buttons.missionListBtn();
+                break;
+            case R.id.btn_ILM_Waypoints:
+                buttons.waypointsBtn();
+                break;
+            case R.id.btn_ILM_Mission_1:
+                buttons.RepeatRoute(missions.loadMission(1), mapController);
+                break;
+            case R.id.btn_ILM_Mission_2:
+                buttons.RepeatRoute(missions.loadMission(2), mapController);
+                break;
+            case R.id.btn_ILM_Mission_3:
+                buttons.RepeatRoute(missions.loadMission(3), mapController);
+                break;
+            case R.id.btn_ILM_Waypoint_1:
+                buttons.setCounter = buttons.count;
+                buttons.count = 0;
+                buttons.goTo(allWaypoints, mapController);
+                break;
+            case R.id.btn_ILM_Waypoint_2:
+                buttons.setCounter = buttons.count;
+                buttons.count = 1;
+                buttons.goTo(allWaypoints, mapController);
+                break;
+            case R.id.btn_ILM_Waypoint_3:
+                buttons.setCounter = buttons.count;
+                buttons.count = 2;
+                buttons.goTo(allWaypoints, mapController);
+                break;
+            case R.id.btn_ILM_Waypoint_4:
+                buttons.setCounter = buttons.count;
+                buttons.count = 3;
+                buttons.goTo(allWaypoints, mapController);
+                break;
+            case R.id.btn_ILM_Waypoint_5:
+                buttons.setCounter = buttons.count;
+                buttons.count = 4;
+                buttons.goTo(allWaypoints, mapController);
+                break;
+            case R.id.btn_ILM_Waypoint_6:
+                buttons.setCounter = buttons.count;
+                buttons.count = 5;
+                buttons.goTo(allWaypoints, mapController);
+                break;
+            case R.id.btn_ILM_Waypoint_7:
+                buttons.setCounter = buttons.count;
+                buttons.count = 6;
+                buttons.goTo(allWaypoints, mapController);
+                break;
+            case R.id.btn_ILM_Waypoint_8:
+                buttons.setCounter = buttons.count;
+                buttons.count = 7;
+                buttons.goTo(allWaypoints, mapController);
+                break;
             default:
                 break;
         }
@@ -227,6 +330,8 @@ public class ILM_RemoteControllerView extends RelativeLayout implements TextureV
         super.onAttachedToWindow();
         refreshView();
         DJISampleApplication.getEventBus().post(new MainActivity.RequestStartFullScreenEvent());
+
+
     }
 
     // Refresh the view
@@ -238,7 +343,9 @@ public class ILM_RemoteControllerView extends RelativeLayout implements TextureV
     protected void onDetachedFromWindow() {
         if (csvLog != null)
             csvLog.closeLogBrain();     //Closing CSV
+        waypoints.closeLogBrain();
         DJISampleApplication.getEventBus().post(new MainActivity.RequestEndFullScreenEvent());
+        mapController.stopLocationUpdates();
         super.onDetachedFromWindow();
     }
 

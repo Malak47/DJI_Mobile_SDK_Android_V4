@@ -167,8 +167,10 @@ public class ILM_VirtualStickView extends RelativeLayout implements View.OnClick
             flightController.setVirtualStickModeEnabled(false, new CommonCallbacks.CompletionCallback() {
                 @Override
                 public void onResult(DJIError djiError) {
-                    ToastUtils.setResultToToast(djiError.getDescription());
+                    if (djiError != null) {
+                        ToastUtils.setResultToToast(djiError.toString());
 //                    DialogUtils.showDialogBasedOnError(getContext(), djiError);
+                    }
                 }
             });
             ((ILM_RemoteControllerView) getParent()).switchToMainLayout();
