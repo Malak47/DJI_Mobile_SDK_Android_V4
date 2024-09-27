@@ -46,7 +46,7 @@ public class ILM_StatusBar {
                 String formattedDateTime = dateFormat.format(new Date());
                 if (date != null) {
                     date.setText(formattedDateTime);
-                    setDate(date.toString());
+                    setDate(date.getText().toString());
                 }
                 dateUpdateHandler.postDelayed(this, 1000);
             }
@@ -64,7 +64,7 @@ public class ILM_StatusBar {
                         @Override
                         public void run() {
                             battery.setText(String.valueOf(batteryPercentage) + "%");
-                            setBattery(battery.toString());
+                            setBattery(battery.getText().toString());
                         }
                     });
                 }
@@ -88,7 +88,7 @@ public class ILM_StatusBar {
                             @Override
                             public void run() {
                                 speed.setText(speedVal + "m/s");
-                                setSpeed(speed.toString());
+                                setSpeed(speed.getText().toString());
                             }
                         });
                     }
@@ -121,9 +121,9 @@ public class ILM_StatusBar {
                                 y.setText(formattedVelocityY);
                                 z.setText(formattedVelocityZ);
 
-                                setX(x.toString());
-                                setY(y.toString());
-                                setZ(z.toString());
+                                setX(x.getText().toString());
+                                setY(y.getText().toString());
+                                setZ(z.getText().toString());
                             }
                         });
                     }
@@ -150,9 +150,9 @@ public class ILM_StatusBar {
                                 roll.setText(Float.toString(r));
                                 yaw.setText(Float.toString(y));
 
-                                setPitch(pitch.toString());
-                                setRoll(roll.toString());
-                                setYaw(yaw.toString());
+                                setPitch(pitch.getText().toString());
+                                setRoll(roll.getText().toString());
+                                setYaw(yaw.getText().toString());
                             }
                         });
                     }
@@ -176,9 +176,9 @@ public class ILM_StatusBar {
                         longitude.setText(String.format(Locale.getDefault(), "%.6f", lon));
                         altitude.setText(String.format(Locale.getDefault(), "%.6f", alt));
 
-                        setLatitude(latitude.toString());
-                        setLongitude(longitude.toString());
-                        setAltitude(altitude.toString());
+                        setLatitude(latitude.getText().toString());
+                        setLongitude(longitude.getText().toString());
+                        setAltitude(altitude.getText().toString());
                     }
                 }
                 locationUpdateHandler.postDelayed(this, 100);

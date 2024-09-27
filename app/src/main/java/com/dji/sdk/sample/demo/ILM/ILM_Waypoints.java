@@ -1,5 +1,7 @@
 package com.dji.sdk.sample.demo.ILM;
 
+import static com.dji.sdk.sample.internal.utils.ToastUtils.showToast;
+
 import android.content.Context;
 import android.os.Environment;
 import android.widget.Toast;
@@ -18,13 +20,12 @@ public class ILM_Waypoints {
     private FileWriter writer;
     private HashMap<String, String> waypoints = new HashMap<String, String>();
     private ILM_StatusBar statusBar;
-    //private List<Waypoint> waypoints2 = new ArrayList<Waypoint>();
     private int counter = 0;
 
-//    public ILM_Waypoints(Context context) {
-//        this.context = context;
-//        statusBar = new ILM_StatusBar(context, null);
-//    }
+    public ILM_Waypoints(Context context, ILM_StatusBar statusBar) {
+        this.context = context;
+        this.statusBar = statusBar;
+    }
 
     private void createCSVFile() {
         String currDate = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.getDefault()).format(new Date());
@@ -60,7 +61,7 @@ public class ILM_Waypoints {
         }
     }
 
-    protected void updateCSVInfo() {
+    protected void updateCSVInfo(ILM_MapController mapController) {
         if (writer != null) {
             try {
                 writer.append(statusBar.getDate()).append(",").
@@ -69,6 +70,7 @@ public class ILM_Waypoints {
                         append(statusBar.getAltitude()).append(',').
                         append(statusBar.getPitch()).append("\n");
                 writer.flush();
+                showToast("Waypoint added !");
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -77,62 +79,55 @@ public class ILM_Waypoints {
         waypoints.put("Longitude" + counter, statusBar.getLongitude());
         waypoints.put("Altitude" + counter, statusBar.getAltitude());
         waypoints.put("Pitch" + counter, statusBar.getPitch());
-        //waypoints2.add(new Waypoint(Double.parseDouble(infoUpdate.getLatitude()), Double.parseDouble(infoUpdate.getLongitude()), Float.parseFloat(infoUpdate.getAltitude())));
+        mapController.addWaypoint(statusBar.getLatitude(), statusBar.getLongitude(), statusBar.getAltitude());
         counter++;
     }
 
-    public double haversine(double lat2, double lon2, double alt2) {
-
-        double lat1 = Double.parseDouble(statusBar.getLatitude());
-        double lon1 = Double.parseDouble(statusBar.getLongitude());
-        double alt1 = Double.parseDouble(statusBar.getAltitude());
-
-        // Convert latitude and longitude from degrees to radians
-        double R = 6371.0 + (alt1 + alt2) / 2; // Earth radius in kilometers, taking average altitude
-
-        double lat1Rad = Math.toRadians(lat1);
-        double lon1Rad = Math.toRadians(lon1);
-        double lat2Rad = Math.toRadians(lat2);
-        double lon2Rad = Math.toRadians(lon2);
-
-        // Haversine formula
-        double dLat = lat2Rad - lat1Rad;
-        double dLon = lon2Rad - lon1Rad;
-        double a = Math.pow(Math.sin(dLat / 2), 2) + Math.cos(lat1Rad) * Math.cos(lat2Rad) * Math.pow(Math.sin(dLon / 2), 2);
-        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        double distance = R * c;
-
-        return distance;
+    public void addWaypoint(String latitude, String longitude, String altitude, String pitch, int count) {
+        waypoints.put("Latitude" + count, latitude);
+        waypoints.put("Longitude" + count, longitude);
+        waypoints.put("Altitude" + count, altitude);
+        waypoints.put("Pitch" + count, pitch);
+        if (writer != null) {
+            try {
+                writer.append(statusBar.getDate()).append(",").
+                        append(latitude).append(",").
+                        append(longitude).append(",").
+                        append(altitude).append(',').
+                        append(pitch).append("\n");
+                writer.flush();
+                showToast("Waypoint added !");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
-    public double calculateBearing(double lat2, double lon2) {
-        double lat1 = Double.parseDouble(statusBar.getLatitude());
-        double lon1 = Double.parseDouble(statusBar.getLongitude());
-
-        double deltaLon = Math.toRadians(lon2 - lon1);
-
-        lat1 = Math.toRadians(lat1);
-        lat2 = Math.toRadians(lat2);
-
-        double y = Math.sin(deltaLon) * Math.cos(lat2);
-        double x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(deltaLon);
-        double bearing = Math.atan2(y, x);
-
-        // Convert radians to degrees
-        bearing = Math.toDegrees(bearing);
-
-        // Normalize bearing to range [0, 360)
-        bearing = (bearing + 360) % 360;
-
-        return bearing;
+    public void removeWaypoint(ILM_MapController mapController) {
+        if (waypoints.isEmpty())
+            return;
+        mapController.removeWaypoint(waypoints.get("Latitude" + (counter - 1)), waypoints.get("Longitude" + (counter - 1)), waypoints.get("Altitude" + (counter - 1)));
+        waypoints.remove("Latitude" + (counter - 1));
+        waypoints.remove("Longitude" + (counter - 1));
+        waypoints.remove("Altitude" + (counter - 1));
+        waypoints.remove("Pitch" + (counter - 1));
+        counter--;
     }
 
     public HashMap<String, String> getWaypoints() {
         return waypoints;
     }
 
+    public void setWaypoints(HashMap<String, String> waypoints) {
+        this.waypoints = waypoints;
+    }
+
     public int getCounter() {
         return counter;
+    }
+
+    public void setCounter(int counter) {
+        this.counter = counter;
     }
 
     public double getAltitude() {

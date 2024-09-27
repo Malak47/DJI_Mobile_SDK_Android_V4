@@ -395,6 +395,8 @@
     <string name="repeat_route">Repeat Route</string>
     <string name="start_recording">Start Recording</string>
     <string name="camera_adjust">Camera Adjust</string>
+    <string name="return_to_home">Return To Home</string>
+    <string name="virtual_stick">Virtual Stick</string>
 
 
 </resources>
