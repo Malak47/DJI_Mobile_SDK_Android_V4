@@ -5,7 +5,9 @@ import static com.dji.sdk.sample.internal.utils.ToastUtils.showToast;
 import android.content.Context;
 import android.os.CountDownTimer;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -18,6 +20,8 @@ import com.dji.sdk.sample.R;
 import com.dji.sdk.sample.internal.controller.DJISampleApplication;
 import com.dji.sdk.sample.internal.utils.ModuleVerificationUtil;
 import com.dji.sdk.sample.internal.utils.ToastUtils;
+
+import org.osmdroid.views.MapView;
 
 import java.util.Locale;
 
@@ -52,6 +56,8 @@ public class ILM_Buttons {
     protected Button missionsBtn, mission1Btn, mission2Btn, mission3Btn;
     protected Button waypointsBtn, waypoint1Btn, waypoint2Btn, waypoint3Btn, waypoint4Btn, waypoint5Btn, waypoint6Btn, waypoint7Btn, waypoint8Btn;
 
+    protected Button mapResizeBtn;
+
     private int pitch_adjust = 0;
     private int yaw_adjust = 0;
     private int roll_adjust = 0;
@@ -59,6 +65,8 @@ public class ILM_Buttons {
     protected int count = 0;
     protected int setCounter = 0;
     private int counter = 0;
+
+    protected Button peopleDetectionBtn;
 
 
     private CompletionCallback createCallback(final String action) {
@@ -84,6 +92,10 @@ public class ILM_Buttons {
     private void initUI() {
         returnToHomeBtn = view.findViewById(R.id.btn_ILM_ReturnToHome);
         repeatRouteBtn = view.findViewById(R.id.btn_ILM_RepeatRoute);
+
+        peopleDetectionBtn = view.findViewById(R.id.btn_ILM_PeopleDetection);
+
+        mapResizeBtn = view.findViewById(R.id.btn_ILM_MapResize);
 
         landBtn = view.findViewById(R.id.btn_ILM_Land);
         takeOffBtn = view.findViewById(R.id.btn_ILM_Take_Off);
@@ -378,6 +390,21 @@ public class ILM_Buttons {
         goTo.setMode(1);
         goTo.isRepeatRoute = true;
         goTo(waypoints, mapController);
+    }
+
+    public void mapResize(boolean isExpanded, MapView mapView) {
+        ViewGroup.LayoutParams params = mapView.getLayoutParams();
+        if (isExpanded) {
+            // Set to small size
+            params.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, context.getResources().getDisplayMetrics());
+            params.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 75, context.getResources().getDisplayMetrics());
+        } else {
+            // Set to expanded size
+            params.width = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 240, context.getResources().getDisplayMetrics());
+            params.height = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 150, context.getResources().getDisplayMetrics());
+        }
+        mapView.setLayoutParams(params);
+
     }
 }
 

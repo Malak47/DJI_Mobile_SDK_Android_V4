@@ -2,6 +2,7 @@ package com.dji.sdk.sample.demo.ILM;
 
 import static com.google.android.gms.internal.zzahn.runOnUiThread;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 
 import com.dji.sdk.sample.R;
@@ -10,10 +11,16 @@ import org.osmdroid.views.MapView;
 
 import android.app.Service;
 import android.graphics.SurfaceTexture;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.TextureView;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,35 +30,43 @@ import androidx.annotation.NonNull;
 import com.dji.sdk.sample.internal.controller.DJISampleApplication;
 import com.dji.sdk.sample.internal.controller.MainActivity;
 
+import com.dji.sdk.sample.internal.utils.VideoFeedView;
 import com.dji.sdk.sample.internal.view.PresentableView;
 
-import dji.sdk.camera.VideoFeeder;
 import dji.sdk.codec.DJICodecManager;
 
-public class ILM_RemoteControllerView extends RelativeLayout implements TextureView.SurfaceTextureListener, View.OnClickListener, PresentableView {
+public class ILM_RemoteControllerView extends RelativeLayout implements View.OnClickListener, PresentableView, TextureView.SurfaceTextureListener {
     private MapView mapView;
     private Context context;
     private ILM_MapController mapController;
     private ILM_StatusBar statusBar;
     private ILM_CSVLog csvLog;
     private ILM_Buttons buttons;
-    private ILM_VirtualStickView virtualStickView;
-    protected VideoFeeder.VideoDataListener mReceivedVideoDataListener = null;
-    protected DJICodecManager mCodecManager = null;
-    protected TextureView mVideoSurface = null;
-    private TextView battery, speed, x, y, z, pitch, roll, yaw, date, distance, latitude, longitude, altitude;
 
+    private ILM_VirtualStickView virtualStickView;
+
+    private TextView battery, speed, x, y, z, pitch, roll, yaw, date, distance, latitude, longitude, altitude;
     private ILM_Missions missions;
     private ILM_Waypoints waypoints;
     private ILM_AllWaypoints allWaypoints;
 
+    private TextView peopleDetected;
+    private ImageView image;
+    private VideoFeedView videoFeedView;
+    private TextureView videoSurface;
+    private View view;
+    private ILM_Video video;
+    private DJICodecManager mCodecManager = null;
+    private boolean isExpanded = false;
+
     public ILM_RemoteControllerView(Context context) {
         super(context);
         this.context = context;
-        init(context);
+        init();
+        video = new ILM_Video(videoFeedView, image, videoSurface, peopleDetected);
     }
 
-    private void init(Context context) {
+    private void init() {
         setClickable(true);
         //<<=====================Status Bar View==========================>>//
         statusBar = new ILM_StatusBar();
@@ -64,18 +79,9 @@ public class ILM_RemoteControllerView extends RelativeLayout implements TextureV
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Service.LAYOUT_INFLATER_SERVICE);
         layoutInflater.inflate(R.layout.view_ilm_remote_controller, this, true);
         initUI();
-
-        mReceivedVideoDataListener = new VideoFeeder.VideoDataListener() {
-
-            @Override
-            public void onReceive(byte[] videoBuffer, int size) {
-                if (mCodecManager != null) {
-                    mCodecManager.sendDataToDecoder(videoBuffer, size);
-                }
-            }
-        };
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void initUI() {
         //<<=========================CSV Log==========================>>//
         csvLog = new ILM_CSVLog(context, statusBar);
@@ -85,9 +91,17 @@ public class ILM_RemoteControllerView extends RelativeLayout implements TextureV
         mapController = new ILM_MapController(context, mapView);
         mapController.init();
         //<<==========================Video==========================>>//
-        mVideoSurface = findViewById(R.id.video_previewer_surface);
-        if (null != mVideoSurface) {
-            mVideoSurface.setSurfaceTextureListener(this);
+        peopleDetected = findViewById(R.id.textView_ILM_PeopleDetected);
+        videoFeedView = findViewById(R.id.videoFeedView_ILM);
+        videoSurface = findViewById(R.id.video_previewer_surface);
+        image = findViewById(R.id.imageView_ILM_Image);
+        view = findViewById(R.id.view_ILM_coverView);
+
+        resizeVideo();
+
+
+        if (videoSurface != null) {
+            videoSurface.setSurfaceTextureListener(this);
         }
         //<<==========================Status Bar==========================>>//
         latitude = findViewById(R.id.textView_ILM_LatitudeInt1);
@@ -121,6 +135,8 @@ public class ILM_RemoteControllerView extends RelativeLayout implements TextureV
         allWaypoints = new ILM_AllWaypoints(context, statusBar);
         //<<==========================Buttons==========================>>//
         buttons = new ILM_Buttons(context, this);
+
+        buttons.peopleDetectionBtn.setOnClickListener(this);
 
         buttons.returnToHomeBtn.setOnClickListener(this);
 
@@ -160,6 +176,9 @@ public class ILM_RemoteControllerView extends RelativeLayout implements TextureV
         buttons.waypoint6Btn.setOnClickListener(this);
         buttons.waypoint7Btn.setOnClickListener(this);
         buttons.waypoint8Btn.setOnClickListener(this);
+        videoFeedView.setCoverView(view);
+
+        buttons.mapResizeBtn.setOnClickListener(this);
 
         missions = new ILM_Missions(getContext(), statusBar, mapController);
         addMissions();
@@ -187,6 +206,7 @@ public class ILM_RemoteControllerView extends RelativeLayout implements TextureV
         findViewById(R.id.buttons_relativeLayout).setVisibility(View.VISIBLE);
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -309,6 +329,15 @@ public class ILM_RemoteControllerView extends RelativeLayout implements TextureV
                 buttons.count = 7;
                 buttons.goTo(allWaypoints, mapController);
                 break;
+            case R.id.btn_ILM_MapResize:
+                Log.e("mapView_ILM", "mapView_ILM");
+                buttons.mapResize(isExpanded, mapView);
+                isExpanded = !isExpanded;
+                break;
+            case R.id.btn_ILM_PeopleDetection:
+                video.setDetectionEnabled(!video.isDetectionEnabled());
+                Log.e("processFrame", "Detection enabled: " + video.isDetectionEnabled());
+                break;
             default:
                 break;
         }
@@ -329,8 +358,8 @@ public class ILM_RemoteControllerView extends RelativeLayout implements TextureV
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
         refreshView();
+        video.displayVideo();
         DJISampleApplication.getEventBus().post(new MainActivity.RequestStartFullScreenEvent());
-
 
     }
 
@@ -349,19 +378,28 @@ public class ILM_RemoteControllerView extends RelativeLayout implements TextureV
         super.onDetachedFromWindow();
     }
 
+    public void showToast(final String msg) {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
     @Override
-    public void onSurfaceTextureAvailable(SurfaceTexture surface, int width, int height) {
+    public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surface, int width, int height) {
         if (mCodecManager == null) {
-            mCodecManager = new DJICodecManager(this.getContext(), surface, width, height);
+            showToast(width + " " + height);
+            mCodecManager = new DJICodecManager(context, surface, width, height);
         }
     }
 
     @Override
-    public void onSurfaceTextureSizeChanged(SurfaceTexture surface, int width, int height) {
+    public void onSurfaceTextureSizeChanged(@NonNull SurfaceTexture surface, int width, int height) {
     }
 
     @Override
-    public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
+    public boolean onSurfaceTextureDestroyed(@NonNull SurfaceTexture surface) {
         if (mCodecManager != null) {
             mCodecManager.cleanSurface();
             mCodecManager = null;
@@ -370,16 +408,40 @@ public class ILM_RemoteControllerView extends RelativeLayout implements TextureV
     }
 
     @Override
-    public void onSurfaceTextureUpdated(SurfaceTexture surface) {
+    public void onSurfaceTextureUpdated(@NonNull SurfaceTexture surface) {
     }
 
-    public void showToast(final String msg) {
-        runOnUiThread(new Runnable() {
-            public void run() {
-                Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
-            }
-        });
+    private void resizeVideo() {
+        // Get the screen height
+        WindowManager windowManager = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+        Display display = windowManager.getDefaultDisplay();
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        display.getMetrics(displayMetrics);
+        int screenHeight = displayMetrics.heightPixels;
+
+        // Convert 30dp to pixels
+        int dpToPx = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 30, getResources().getDisplayMetrics());
+
+        // Calculate the new height
+        int newHeight = screenHeight - dpToPx;
+
+        // Apply the height to all the views
+        setViewHeight(R.id.relativeLayout, screenHeight);
+        setViewHeight(R.id.videoFeedView_ILM, screenHeight);
+        setViewHeight(R.id.video_previewer_surface, screenHeight);
+        setViewHeight(R.id.imageView_ILM_Image, screenHeight);
+        setViewHeight(R.id.view_ILM_coverView, screenHeight);
     }
+
+    private void setViewHeight(int viewId, int height) {
+        View view = findViewById(viewId);
+        if (view != null) {
+            ViewGroup.LayoutParams layoutParams = view.getLayoutParams();
+            layoutParams.height = height;
+            view.setLayoutParams(layoutParams);
+        }
+    }
+
 }
 
 
