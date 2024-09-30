@@ -22,7 +22,7 @@ The flight data is saved to a **CSV** file on the Android device, containing all
 5) Gradle Version 6.7.1 and Android Gradle Plugin Version 4.2.2 (`In Project Structure` -> `Project`).
 6) Download OpenCV 4.10.0 and extract it ([Link for download](https://github.com/opencv/opencv/releases/download/4.10.0/opencv-4.10.0-android-sdk.zip))
 7) Import the OpenCV module inside your Android Studio project (`File` -> `New` -> `Import Module` -> Enter the Source directory for the OpenCV's SDK and click `Ok` -> Name the Module as "OpenCV" and click `Finish`)
-8) You may get an error importing, navigate to `build.gradle (Module: openCV)` inside your project, and [paste this inside](https://github.com/Malak47/DJI_Mobile_SDK_Android_V4/blob/05a38f3025dd463f45162ec09cee816a81ea2579/openCV/build.gradle)
+8) You may get an error importing, navigate to `build.gradle (Module: openCV)` inside your project, and [paste this inside](https://github.com/Malak47/DJI_Mobile_SDK_Android_V4/blob/fc803ec79002155ce2565655bd0657ff4d6b4b1d/OpenCV_build_temp.gradle)
 9) Click on `Sync Project with Gradle Files`.
 10) Open `Project Structure` -> `Dependencies`, under `Modules` click on `<All Modules>`, under `All dependencies` click the `+ Add dependency` button, click on `Module Dependency`, select `app` and click `Ok`, then check the box for OpenCV and click `Ok`.
 11) Download yolov7-tiny.weights and add it to your project's assets folder. ([Link for download](https://github.com/AlexeyAB/darknet/releases/download/yolov4/yolov7-tiny.weights))
