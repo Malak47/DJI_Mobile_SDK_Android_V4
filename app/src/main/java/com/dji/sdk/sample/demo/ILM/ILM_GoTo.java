@@ -38,6 +38,7 @@ public class ILM_GoTo implements ILM_iGoTo {
     private int count = 0;
     private ILM_Waypoints ilmWaypoints;
     private ILM_MapController mapController;
+    private boolean isFollowMe = false;
 
     public ILM_GoTo(ILM_Waypoints ilmWaypoints, ILM_MapController mapController) {
         this.ilmWaypoints = ilmWaypoints;
@@ -57,6 +58,7 @@ public class ILM_GoTo implements ILM_iGoTo {
         if (ModuleVerificationUtil.isFlightControllerAvailable()) {
             flightController = DJISampleApplication.getAircraftInstance().getFlightController();
         }
+        isFollowMe = true;
     }
 
     @Override
@@ -71,7 +73,7 @@ public class ILM_GoTo implements ILM_iGoTo {
             @Override
             public void onResult(DJIError djiError) {
                 if (djiError == null) {
-                    showToast("Virtual sticks enabled!");
+                    Log.d("goTo()", "Virtual sticks enabled!");
                 } else showToast("Failed to enable virtual sticks: " + djiError);
             }
         });
@@ -80,15 +82,12 @@ public class ILM_GoTo implements ILM_iGoTo {
         flightController.setYawControlMode(YawControlMode.ANGLE);
         flightController.setRollPitchCoordinateSystem(FlightCoordinateSystem.BODY);
 
-        mapController.showDestinationPin(lat, lon, alt);
-        Log.e("--------mode--------", String.valueOf(this.mode));
+        if (!isFollowMe) {
+            mapController.showDestinationPin(lat, lon, alt);
+        }
         if (this.mode == 1) {
-            Log.e("--------mode 1--------", String.valueOf(this.mode));
             goToMode1();
-            Log.e("--------end of mode 1--------", String.valueOf(this.mode));
-
         } else if (this.mode == 2) {
-            Log.e("--------mode 2--------", String.valueOf(this.mode));
             goToMode2();
         }
     }
@@ -109,19 +108,23 @@ public class ILM_GoTo implements ILM_iGoTo {
         forward_timer.schedule(new TimerTask() {
             @Override
             public void run() {
+                Log.d("Final Distance", String.valueOf(finalDistance[0]));
+                Log.d("minDistance", String.valueOf(minDistance * 0.001));
+                Log.d("isGoTo", String.valueOf(isGoTo));
+                Log.d("radius", String.valueOf(radius));
+                Log.d("alt", String.valueOf(alt));
                 if (finalDistance[0] > minDistance * 0.001 && isGoTo && finalDistance[0] < radius && alt > 3.0) {
-                    flightController.sendVirtualStickFlightControlData(
-                            new FlightControlData(0, (float) speed, yaw, (float) alt),
-                            new CommonCallbacks.CompletionCallback() {
-                                @Override
-                                public void onResult(DJIError djiError) {
-                                    if (djiError != null) {
-                                        Log.e("TAG", "Couldn't fly towards waypoint: " + djiError.getDescription());
-                                    } else {
-                                        Log.d("TAG", "Flying Towards Waypoint!");
-                                    }
-                                }
-                            });
+                    flightController.sendVirtualStickFlightControlData(new FlightControlData(0,
+                            (float) speed, yaw, (float) alt), new CommonCallbacks.CompletionCallback() {
+                        @Override
+                        public void onResult(DJIError djiError) {
+                            if (djiError != null) {
+                                Log.e("TAG", "Couldn't fly towards waypoint: " + djiError.getDescription());
+                            } else {
+                                Log.d("TAG", "Flying Towards Waypoint!");
+                            }
+                        }
+                    });
                     double angle = calculateBearing();
 
                     if (angle > 180)
@@ -135,7 +138,10 @@ public class ILM_GoTo implements ILM_iGoTo {
                     Log.e("Distance", String.valueOf(finalDistance[0]));
                     Log.e("yaw", String.valueOf(angle));
                 } else {
-                    mapController.showAllWaypoints();
+                    Log.e("Else", "Else");
+                    if (!isFollowMe) {
+                        mapController.showAllWaypoints();
+                    }
                     forward_timer.cancel();
                     flightController.setVirtualStickModeEnabled(false, null);
                     if (isRepeatRoute) {
@@ -159,7 +165,7 @@ public class ILM_GoTo implements ILM_iGoTo {
                     } else {
                         forward_timer.cancel();
                         flightController.setVirtualStickModeEnabled(false, null);
-                        isGoTo = true;
+                        isGoTo = false;
                     }
                 }
 
@@ -204,7 +210,7 @@ public class ILM_GoTo implements ILM_iGoTo {
                 } else {
                     forward_timer.cancel();
                     flightController.setVirtualStickModeEnabled(false, null);
-                    isGoTo = true;
+                    isGoTo = false;
                 }
 
             }
@@ -324,5 +330,12 @@ public class ILM_GoTo implements ILM_iGoTo {
 
     public void setIsGoTo(boolean isGoTo) {
         this.isGoTo = isGoTo;
+    }
+
+    public void disableGoTo() {
+        if (flightController != null) {
+            flightController.setVirtualStickModeEnabled(false, null);
+        }
+        this.isGoTo = false;
     }
 }

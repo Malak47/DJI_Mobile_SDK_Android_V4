@@ -15,6 +15,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.TextureView;
 import android.view.View;
@@ -59,11 +60,16 @@ public class ILM_RemoteControllerView extends RelativeLayout implements View.OnC
     private DJICodecManager mCodecManager = null;
     private boolean isExpanded = false;
 
+    private ILM_GPS gps;
+
     public ILM_RemoteControllerView(Context context) {
         super(context);
         this.context = context;
         init();
         video = new ILM_Video(videoFeedView, image, videoSurface, peopleDetected);
+        gps = new ILM_GPS(context);
+        gps.requestLocationUpdates();
+
     }
 
     private void init() {
@@ -126,6 +132,7 @@ public class ILM_RemoteControllerView extends RelativeLayout implements View.OnC
         statusBar.updateSpeed(speed);
         statusBar.updateXYZ(x, y, z);
         statusBar.updateLatitudeLongitudeAltitude(latitude, longitude, altitude);
+
         statusBar.updatePitchRollYaw(pitch, roll, yaw);
 
         //<<==========================Waypoints==========================>>//<
@@ -144,6 +151,7 @@ public class ILM_RemoteControllerView extends RelativeLayout implements View.OnC
         buttons.stopBtn.setOnClickListener(this);
         buttons.landBtn.setOnClickListener(this);
         buttons.goToBtn.setOnClickListener(this);
+        buttons.followMeBtn.setOnClickListener(this);
         buttons.enableVirtualStickBtn.setOnClickListener(this);
 //        buttons.panicStopBtn.setOnClickListener(this);
         buttons.recordBtn.setOnClickListener(this);
@@ -209,6 +217,7 @@ public class ILM_RemoteControllerView extends RelativeLayout implements View.OnC
     @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
+        v.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
         switch (v.getId()) {
             case R.id.btn_ILM_Take_Off:
                 buttons.takeOff();
@@ -221,6 +230,9 @@ public class ILM_RemoteControllerView extends RelativeLayout implements View.OnC
                 break;
             case R.id.btn_ILM_GoTo:
                 buttons.goTo(waypoints, mapController);
+                break;
+            case R.id.btn_ILM_FollowMe:
+                buttons.followMe();
                 break;
             case R.id.btn_ILM_RepeatRoute:
                 buttons.RepeatRoute(waypoints, mapController);
@@ -375,6 +387,7 @@ public class ILM_RemoteControllerView extends RelativeLayout implements View.OnC
         waypoints.closeLogBrain();
         DJISampleApplication.getEventBus().post(new MainActivity.RequestEndFullScreenEvent());
         mapController.stopLocationUpdates();
+        gps.onDestroy();
         super.onDetachedFromWindow();
     }
 

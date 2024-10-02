@@ -12,7 +12,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.dji.sdk.sample.R;
@@ -31,31 +30,25 @@ import dji.common.flightcontroller.LocationCoordinate3D;
 import dji.common.util.CommonCallbacks;
 import dji.common.util.CommonCallbacks.CompletionCallback;
 import dji.sdk.flightcontroller.FlightController;
-import dji.common.mission.waypoint.Waypoint;
 import dji.sdk.gimbal.Gimbal;
 import dji.sdk.sdkmanager.DJISDKManager;
 
+/**
+ * The ILM_Buttons class contains all the buttons for the ILM_RemoteController and its functionalities.
+ */
 public class ILM_Buttons {
-    private Context context;
-    private View view;
-    private FlightController flightController = ModuleVerificationUtil.getFlightController();
-    private ILM_AdjustCamera cameraAdjust = new ILM_AdjustCamera();
+    private final Context context;
+    private final View view;
+
+    private final FlightController flightController = ModuleVerificationUtil.getFlightController();
+    private final ILM_AdjustCamera cameraAdjust = new ILM_AdjustCamera();
     private ILM_GoTo goTo;
-
-    protected boolean isRecording = false;
-    private CountDownTimer recordingTimer;
-    private long recordingTimeMillis = 0;
-    protected TextView recordText;
-
-    protected Button returnToHomeBtn, repeatRouteBtn;
-    //    protected Button panicStopBtn;
-    protected Button landBtn, takeOffBtn, goToBtn, stopBtn, enableVirtualStickBtn, recordBtn;
-    protected Button waypointBtn, addWaypointBtn, removeWaypointBtn;
+    private ILM_FollowMe followMe;
+    protected Button returnToHomeBtn, landBtn, takeOffBtn, goToBtn, followMeBtn, stopBtn, enableVirtualStickBtn, recordBtn, peopleDetectionBtn;
+    protected Button waypointBtn, addWaypointBtn, removeWaypointBtn, repeatRouteBtn;
     protected Button cameraAdjustBtn, adjustPitchPlusBtn, adjustPitchMinusBtn, adjustRollPlusBtn, adjustRollMinusBtn, adjustYawPlusBtn, adjustYawMinusBtn;
-
     protected Button missionsBtn, mission1Btn, mission2Btn, mission3Btn;
     protected Button waypointsBtn, waypoint1Btn, waypoint2Btn, waypoint3Btn, waypoint4Btn, waypoint5Btn, waypoint6Btn, waypoint7Btn, waypoint8Btn;
-
     protected Button mapResizeBtn;
 
     private int pitch_adjust = 0;
@@ -66,7 +59,10 @@ public class ILM_Buttons {
     protected int setCounter = 0;
     private int counter = 0;
 
-    protected Button peopleDetectionBtn;
+    protected boolean isRecording = false;
+    private CountDownTimer recordingTimer;
+    private long recordingTimeMillis = 0;
+    protected TextView recordText;
 
 
     private CompletionCallback createCallback(final String action) {
@@ -85,31 +81,28 @@ public class ILM_Buttons {
     public ILM_Buttons(Context context, View view) {
         this.context = context;
         this.view = view;
+        followMe = new ILM_FollowMe(context);
         initUI();
         panicStop();
     }
 
     private void initUI() {
+        //<<=====================Main Buttons==========================>>//
         returnToHomeBtn = view.findViewById(R.id.btn_ILM_ReturnToHome);
-        repeatRouteBtn = view.findViewById(R.id.btn_ILM_RepeatRoute);
-
-        peopleDetectionBtn = view.findViewById(R.id.btn_ILM_PeopleDetection);
-
-        mapResizeBtn = view.findViewById(R.id.btn_ILM_MapResize);
-
         landBtn = view.findViewById(R.id.btn_ILM_Land);
         takeOffBtn = view.findViewById(R.id.btn_ILM_Take_Off);
         goToBtn = view.findViewById(R.id.btn_ILM_GoTo);
+        followMeBtn = view.findViewById(R.id.btn_ILM_FollowMe);
         stopBtn = view.findViewById(R.id.btn_ILM_Stop);
-//        panicStopBtn = view.findViewById(R.id.btn_ILM_Panic_Stop);
         enableVirtualStickBtn = view.findViewById(R.id.btn_ILM_Enable_VirtualStick);
         recordBtn = view.findViewById(R.id.btn_ILM_Record);
-        recordText = view.findViewById(R.id.textView_ILM_Record);
-
+        peopleDetectionBtn = view.findViewById(R.id.btn_ILM_PeopleDetection);
+        //<<=====================Waypoints Buttons==========================>>//
         waypointBtn = view.findViewById(R.id.btn_ILM_Waypoint);
         addWaypointBtn = view.findViewById(R.id.btn_ILM_AddWaypoint);
         removeWaypointBtn = view.findViewById(R.id.btn_ILM_RemoveWaypoint);
-
+        repeatRouteBtn = view.findViewById(R.id.btn_ILM_RepeatRoute);
+        //<<=====================Camera Adjust Buttons==========================>>//
         cameraAdjustBtn = view.findViewById(R.id.btn_ILM_CameraAdjust);
         adjustPitchPlusBtn = view.findViewById(R.id.btn_ILM_AdjustPitchPlus);
         adjustPitchMinusBtn = view.findViewById(R.id.btn_ILM_AdjustPitchMinus);
@@ -117,12 +110,12 @@ public class ILM_Buttons {
         adjustRollMinusBtn = view.findViewById(R.id.btn_ILM_AdjustRollMinus);
         adjustYawPlusBtn = view.findViewById(R.id.btn_ILM_AdjustYawPlus);
         adjustYawMinusBtn = view.findViewById(R.id.btn_ILM_AdjustYawMinus);
-
+        //<<=====================Missions Buttons==========================>>//
         missionsBtn = view.findViewById(R.id.btn_ILM_Missions);
         mission1Btn = view.findViewById(R.id.btn_ILM_Mission_1);
         mission2Btn = view.findViewById(R.id.btn_ILM_Mission_2);
         mission3Btn = view.findViewById(R.id.btn_ILM_Mission_3);
-
+        //<<=====================Waypoints Buttons==========================>>//
         waypointsBtn = view.findViewById(R.id.btn_ILM_Waypoints);
         waypoint1Btn = view.findViewById(R.id.btn_ILM_Waypoint_1);
         waypoint2Btn = view.findViewById(R.id.btn_ILM_Waypoint_2);
@@ -132,58 +125,12 @@ public class ILM_Buttons {
         waypoint6Btn = view.findViewById(R.id.btn_ILM_Waypoint_6);
         waypoint7Btn = view.findViewById(R.id.btn_ILM_Waypoint_7);
         waypoint8Btn = view.findViewById(R.id.btn_ILM_Waypoint_8);
-
-
-        recordBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                record();
-            }
-        });
+        //<<==========================Other===============================>>//
+        mapResizeBtn = view.findViewById(R.id.btn_ILM_MapResize);
+        recordText = view.findViewById(R.id.textView_ILM_Record);
     }
 
-    public void addWaypoint(ILM_Waypoints waypoints, ILM_MapController mapController, ILM_AllWaypoints allWaypoints) {
-        if (goTo == null)
-            goTo = new ILM_GoTo(waypoints, mapController);
-        if (count == 0) {
-            LocationCoordinate3D aircraftLocation = flightController.getState().getAircraftLocation();
-            double lat2 = 0;
-            double lon2 = 0;
-            double alt2 = 0;
-            if (aircraftLocation != null) {
-                lat2 = aircraftLocation.getLatitude();
-                lon2 = aircraftLocation.getLongitude();
-                alt2 = aircraftLocation.getAltitude();
-            }
-            if (counter < 8) {
-                allWaypoints.addWaypoint(String.valueOf(lat2), String.valueOf(lon2), String.valueOf(alt2), String.valueOf(0), counter);
-            }
-        }
-        waypoints.updateCSVInfo(mapController);
-        counter++;
-    }
-
-    public void removeWaypoint(ILM_Waypoints waypoints, ILM_MapController mapController) {
-        waypoints.removeWaypoint(mapController);
-        ToastUtils.setResultToToast("Waypoint Removed!");
-    }
-
-    protected void returnToHome() {
-        flightController.startGoHome(createCallback("Returning To Home!"));
-    }
-
-    protected void takeOff() {
-        flightController.startTakeoff(createCallback("Taking Off!"));
-    }
-
-    protected void stop() {
-        flightController.cancelGoHome(null);
-        flightController.cancelTakeoff(null);
-        flightController.cancelLanding(createCallback("Drone is Stopped!"));
-        goTo.isGoTo = false;
-        flightController.setVirtualStickModeEnabled(false, null);
-    }
-
+    //<<=====================Main Functions==========================>>//
     protected void panicStop() {
         //ToDo: Ask Boaz about it
         if (flightController != null) {
@@ -191,8 +138,22 @@ public class ILM_Buttons {
         }
     }
 
+    protected void returnToHome() {
+        if (flightController != null) {
+            flightController.startGoHome(createCallback("Returning To Home!"));
+        }
+    }
+
     protected void land() {
-        flightController.startLanding(createCallback("Landing!"));
+        if (flightController != null) {
+            flightController.startLanding(createCallback("Landing!"));
+        }
+    }
+
+    protected void takeOff() {
+        if (flightController != null) {
+            flightController.startTakeoff(createCallback("Taking Off!"));
+        }
     }
 
     protected synchronized void goTo(ILM_Waypoints waypoints, ILM_MapController mapController) {
@@ -211,24 +172,49 @@ public class ILM_Buttons {
         Log.e("&Altitude", String.valueOf(alt));
         Log.e("&Latitude", String.valueOf(lat));
         Log.e("&Longitude", String.valueOf(lon));
+
         goTo.isGoTo = true;
         goTo.setWaypoint(lat, lon, alt);
         goTo.goTo();
     }
 
-    public void EnableVirtualStick() {
-        flightController.setVirtualStickModeEnabled(true, new CommonCallbacks.CompletionCallback() {
-            @Override
-            public void onResult(DJIError djiError) {
-                flightController.setVirtualStickAdvancedModeEnabled(true);
-                if (djiError != null) {
-                    ToastUtils.setResultToToast(djiError.toString());
-                }
-//                DialogUtils.showDialogBasedOnError(context, djiError);
-            }
-        });
+    protected void followMe() {
+        followMe.FollowMe();
     }
 
+    protected void stop() {
+        if (flightController != null) {
+            flightController.cancelGoHome(null);
+            flightController.cancelTakeoff(null);
+            flightController.cancelLanding(createCallback("Drone is Stopped!"));
+        }
+        if (goTo != null) {
+            goTo.isGoTo = false;
+        }
+        if (flightController != null) {
+            flightController.setVirtualStickModeEnabled(false, null);
+        }
+        if (followMe.isFollowMe) {
+            followMe.stopFollowing();
+        }
+    }
+
+    public void EnableVirtualStick() {
+        if (flightController != null) {
+            flightController.setVirtualStickModeEnabled(true, new CompletionCallback() {
+                @Override
+                public void onResult(DJIError djiError) {
+                    flightController.setVirtualStickAdvancedModeEnabled(true);
+                    if (djiError != null) {
+                        ToastUtils.setResultToToast(djiError.toString());
+                    }
+
+                }
+            });
+        }
+    }
+
+    //<<=====================Recording Functions==========================>>//
     public void record() {
         if (isRecording) {
             startRecording();
@@ -303,7 +289,9 @@ public class ILM_Buttons {
             }
         });
     }
+    //<<=========================================================================>>//
 
+    //<<=======================Waypoints Functions===============================>>//
     protected void waypointBtn() {
         LinearLayout waypointLayout = view.findViewById(R.id.layout_ILM_AddRemoveWaypoint);
         LinearLayout expandedMenuLayout = view.findViewById(R.id.layout_expandedMenuLayout);
@@ -317,7 +305,45 @@ public class ILM_Buttons {
         }
     }
 
-    //btn_ILM_Missions
+    public void addWaypoint(ILM_Waypoints waypoints, ILM_MapController mapController, ILM_AllWaypoints allWaypoints) {
+        if (goTo == null)
+            goTo = new ILM_GoTo(waypoints, mapController);
+        if (count == 0) {
+            LocationCoordinate3D aircraftLocation = null;
+            if (flightController != null) {
+                aircraftLocation = flightController.getState().getAircraftLocation();
+            }
+            double lat2 = 0;
+            double lon2 = 0;
+            double alt2 = 0;
+            if (aircraftLocation != null) {
+                lat2 = aircraftLocation.getLatitude();
+                lon2 = aircraftLocation.getLongitude();
+                alt2 = aircraftLocation.getAltitude();
+            }
+            if (counter < 8) {
+                allWaypoints.addWaypoint(String.valueOf(lat2), String.valueOf(lon2), String.valueOf(alt2), String.valueOf(0), counter);
+            }
+        }
+        waypoints.updateCSVInfo(mapController);
+        counter++;
+    }
+
+    public void removeWaypoint(ILM_Waypoints waypoints, ILM_MapController mapController) {
+        waypoints.removeWaypoint(mapController);
+        ToastUtils.setResultToToast("Waypoint Removed!");
+    }
+
+    public void RepeatRoute(ILM_Waypoints waypoints, ILM_MapController mapController) {
+        if (goTo == null)
+            goTo = new ILM_GoTo(waypoints, mapController);
+        goTo.setMode(1);
+        goTo.isRepeatRoute = true;
+        goTo(waypoints, mapController);
+    }
+    //<<=========================================================================>>//
+
+    //<<=======================Missions & Waypoints list=========================>>//
     protected void missionListBtn() {
         ScrollView missionsList = view.findViewById(R.id.scrollView_missionsList);
         TableLayout LatLonAlt = view.findViewById(R.id.tableRow_ILM_LatLonAlt);
@@ -330,7 +356,6 @@ public class ILM_Buttons {
         }
     }
 
-    //btn_ILM_Waypoints
     protected void waypointsBtn() {
         ScrollView waypointsList = view.findViewById(R.id.scrollView_waypointsList);
         TableLayout LatLonAlt = view.findViewById(R.id.tableRow_ILM_LatLonAlt);
@@ -342,7 +367,9 @@ public class ILM_Buttons {
             LatLonAlt.setVisibility(View.GONE);
         }
     }
+    //<<=========================================================================>>//
 
+    //<<=======================Camera Adjust Functions===========================>>//
     protected void cameraAdjustVisibility() {
         LinearLayout cameraAdjustLayout = view.findViewById(R.id.layout_ILM_AdjustPitchRollYaw);
         if (cameraAdjustLayout.getVisibility() == View.VISIBLE) {
@@ -383,15 +410,9 @@ public class ILM_Buttons {
             }
         }
     }
+    //<<=========================================================================>>//
 
-    public void RepeatRoute(ILM_Waypoints waypoints, ILM_MapController mapController) {
-        if (goTo == null)
-            goTo = new ILM_GoTo(waypoints, mapController);
-        goTo.setMode(1);
-        goTo.isRepeatRoute = true;
-        goTo(waypoints, mapController);
-    }
-
+    //<<=======================Map Functions=====================================>>//
     public void mapResize(boolean isExpanded, MapView mapView) {
         ViewGroup.LayoutParams params = mapView.getLayoutParams();
         if (isExpanded) {

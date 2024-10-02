@@ -2,23 +2,13 @@ package com.dji.sdk.sample.demo.ILM;
 
 import static com.google.android.gms.internal.zzahn.runOnUiThread;
 
-import android.content.Context;
-
-import com.dji.sdk.sample.R;
-
-import android.app.Service;
-
 import android.os.Handler;
-import android.view.LayoutInflater;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
 import com.dji.sdk.sample.internal.controller.DJISampleApplication;
-import com.dji.sdk.sample.internal.controller.MainActivity;
 import com.dji.sdk.sample.internal.utils.ModuleVerificationUtil;
-import com.dji.sdk.sample.internal.view.PresentableView;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -186,6 +176,7 @@ public class ILM_StatusBar {
         };
         updateTimeRunnable.run();
     }
+
 
     public String getBattery() {
         return battery;
