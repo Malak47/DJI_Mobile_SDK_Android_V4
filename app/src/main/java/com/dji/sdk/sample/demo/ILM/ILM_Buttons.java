@@ -43,7 +43,7 @@ public class ILM_Buttons {
     private final FlightController flightController = ModuleVerificationUtil.getFlightController();
     private final ILM_AdjustCamera cameraAdjust = new ILM_AdjustCamera();
     private ILM_GoTo goTo;
-    private ILM_FollowMe followMe;
+    private final ILM_FollowMe followMe;
     protected Button returnToHomeBtn, landBtn, takeOffBtn, goToBtn, followMeBtn, stopBtn, enableVirtualStickBtn, recordBtn, peopleDetectionBtn;
     protected Button waypointBtn, addWaypointBtn, removeWaypointBtn, repeatRouteBtn;
     protected Button cameraAdjustBtn, adjustPitchPlusBtn, adjustPitchMinusBtn, adjustRollPlusBtn, adjustRollMinusBtn, adjustYawPlusBtn, adjustYawMinusBtn;
@@ -334,8 +334,10 @@ public class ILM_Buttons {
         ToastUtils.setResultToToast("Waypoint Removed!");
     }
 
-    public void RepeatRoute(ILM_Waypoints waypoints, ILM_MapController mapController) {
+    public void RepeatRoute(ILM_Waypoints waypoints, ILM_MapController mapController, boolean isMission) {
         if (goTo == null)
+            goTo = new ILM_GoTo(waypoints, mapController);
+        if (isMission)
             goTo = new ILM_GoTo(waypoints, mapController);
         goTo.setMode(1);
         goTo.isRepeatRoute = true;
