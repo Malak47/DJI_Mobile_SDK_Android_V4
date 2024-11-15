@@ -1,13 +1,17 @@
 package com.dji.sdk.sample.demo.ILM;
 
+import static com.dji.sdk.sample.internal.utils.ToastUtils.showToast;
+
 import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 
+import com.dji.sdk.sample.internal.utils.ToastUtils;
+
 public class ILM_FollowMe {
     private ILM_GoTo goTo;
     private ILM_GPS gps;
-    private final double ALTITUDE = 10.0;
+    private final double ALTITUDE = 20.0;
     private final double SPEED = 2.0;
     private final double RADIUS = 30.0;
     private final double MINIMUM_DISTANCE = 3.0;
@@ -23,7 +27,6 @@ public class ILM_FollowMe {
 
     protected void FollowMe() {
         isFollowMe = !isFollowMe;
-
         if (!isFollowMe) {
             stopFollowing();
             return;
@@ -34,13 +37,16 @@ public class ILM_FollowMe {
         followMeRunnable = new Runnable() {
             @Override
             public void run() {
-                goTo.setWaypoint(gps.getLatitude(), gps.getLongitude(), gps.getAltitude() + ALTITUDE);
+                if (!isFollowMe) {
+                    stopFollowing();
+                    return;
+                }
+                goTo.setWaypoint(gps.getLatitude(), gps.getLongitude(), ALTITUDE);
                 goTo.goTo();
                 // Check if the target position differs from the current one
-                if (goTo.getAlt() != gps.getAltitude() + ALTITUDE || goTo.getLat() != gps.getLatitude() || goTo.getLon() != gps.getLongitude()) {
-                    goTo.setWaypoint(gps.getLatitude(), gps.getLongitude(), gps.getAltitude() + ALTITUDE);
+                if (goTo.getLat() != gps.getLatitude() || goTo.getLon() != gps.getLongitude()) {
+                    goTo.setWaypoint(gps.getLatitude(), gps.getLongitude(), ALTITUDE);
                     goTo.goTo();
-
                 }
                 handler.postDelayed(this, 500);
             }

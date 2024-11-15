@@ -14,30 +14,17 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
-/**
- * The ILM_CSVLog class provides functionality for logging data from a DJI drone to a CSV file.
- * The data is fetched from an instance of ILM_StatusBar and is written to a CSV file on a regular interval.
- */
 public class ILM_CSVLog {
-    private final Context context;
+    private Context context;
     private FileWriter writer;
-    private final ILM_StatusBar statusBar;
+    private Timer counterTimer;
+    private ILM_StatusBar statusBar;
 
-    /**
-     * Constructs an instance of ILM_CSVLog.
-     *
-     * @param context   The application context.
-     * @param statusBar The ILM_StatusBar instance that provides data to be logged.
-     */
     public ILM_CSVLog(Context context, ILM_StatusBar statusBar) {
         this.context = context;
         this.statusBar = statusBar;
     }
 
-    /**
-     * Creates a new CSV file in the device's public Documents directory under the "DJI_Drone_Logs" folder.
-     * The filename is generated based on the current date and time.
-     */
     private void createCSVFile() {
         String currentDate = new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(new Date());
         String filename = "ILM_DJI_Drone_Data_" + currentDate + ".csv";
@@ -59,9 +46,6 @@ public class ILM_CSVLog {
         }
     }
 
-    /**
-     * Closes the current CSV file if it is open.
-     */
     private void closeCSVFile() {
         if (writer != null) {
             try {
@@ -77,12 +61,9 @@ public class ILM_CSVLog {
         }
     }
 
-    /**
-     * Starts a timer that updates the CSV file at regular intervals (every 100 milliseconds).
-     */
     private void startUpdatingCounter() {
         // Start the timer to update the counter
-        Timer counterTimer = new Timer();
+        counterTimer = new Timer();
         counterTimer.schedule(new TimerTask() {
             @Override
             public void run() {
@@ -93,9 +74,6 @@ public class ILM_CSVLog {
         }, 0, 100); // Update every 100ms
     }
 
-    /**
-     * Writes the latest data from the ILM_StatusBar to the CSV file.
-     */
     private void updateCSVInfo() {
         if (writer != null) {
             try {
@@ -119,17 +97,11 @@ public class ILM_CSVLog {
         }
     }
 
-    /**
-     * Initializes the CSV logging process by creating the CSV file and starting the regular data updates.
-     */
     protected void createLogBrain() {
         createCSVFile();
         startUpdatingCounter();
     }
 
-    /**
-     * Stops the CSV logging process and closes the CSV file.
-     */
     protected void closeLogBrain() {
         closeCSVFile();
     }

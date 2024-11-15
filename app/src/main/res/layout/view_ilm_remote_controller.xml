@@ -91,6 +91,15 @@
         android:layout_marginBottom="-30dp"
         android:background="@drawable/ilm_map_resize" />
 
+    <Button
+        android:id="@+id/btn_ILM_MapCenter"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_below="@+id/linearLayout2"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="-45dp"
+        android:background="@drawable/ilm_map_center" />
+
     <TableLayout
         android:id="@+id/tableLayout"
         android:layout_width="wrap_content"
@@ -340,7 +349,6 @@
                 android:gravity="center"
                 android:text="@string/_0"
                 android:textColor="#FF0000" />
-
         </TableRow>
 
         <TableRow
@@ -363,7 +371,6 @@
                 android:gravity="center"
                 android:text="@string/_0"
                 android:textColor="#FF0000" />
-
         </TableRow>
 
         <TableRow

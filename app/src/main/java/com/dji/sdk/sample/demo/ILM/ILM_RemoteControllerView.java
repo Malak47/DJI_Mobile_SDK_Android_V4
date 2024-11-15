@@ -11,11 +11,11 @@ import org.osmdroid.views.MapView;
 
 import android.app.Service;
 import android.graphics.SurfaceTexture;
+import android.speech.SpeechRecognizer;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
-import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
 import android.view.TextureView;
 import android.view.View;
@@ -60,16 +60,11 @@ public class ILM_RemoteControllerView extends RelativeLayout implements View.OnC
     private DJICodecManager mCodecManager = null;
     private boolean isExpanded = false;
 
-    private ILM_GPS gps;
-
     public ILM_RemoteControllerView(Context context) {
         super(context);
         this.context = context;
         init();
         video = new ILM_Video(videoFeedView, image, videoSurface, peopleDetected);
-        gps = new ILM_GPS(context);
-        gps.requestLocationUpdates();
-
     }
 
     private void init() {
@@ -130,9 +125,9 @@ public class ILM_RemoteControllerView extends RelativeLayout implements View.OnC
         statusBar.updateDateTime(date);
         statusBar.updateBattery(battery);
         statusBar.updateSpeed(speed);
+        statusBar.updateDistance(distance, new ILM_GPS(this.context));
         statusBar.updateXYZ(x, y, z);
         statusBar.updateLatitudeLongitudeAltitude(latitude, longitude, altitude);
-
         statusBar.updatePitchRollYaw(pitch, roll, yaw);
 
         //<<==========================Waypoints==========================>>//<
@@ -187,16 +182,17 @@ public class ILM_RemoteControllerView extends RelativeLayout implements View.OnC
         videoFeedView.setCoverView(view);
 
         buttons.mapResizeBtn.setOnClickListener(this);
+        buttons.mapCenterBtn.setOnClickListener(this);
 
         missions = new ILM_Missions(getContext(), statusBar, mapController);
-        addMissions();
 
-    }
+        SpeechRecognizer speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context);
+        ILM_SpeechRecognizer ilmSpeechRecognizer = new ILM_SpeechRecognizer(context, buttons, waypoints, mapController);
 
-    private void addMissions() {
-        for (int i = 0; i < 3; i++) {
-            missions.addMission();
-        }
+        ILM_WordListening ilmWordListening = new ILM_WordListening(speechRecognizer, ilmSpeechRecognizer);
+        speechRecognizer.setRecognitionListener(ilmWordListening);
+
+        ilmWordListening.startListening();
     }
 
     public void switchToVirtualStickLayout() {
@@ -217,19 +213,19 @@ public class ILM_RemoteControllerView extends RelativeLayout implements View.OnC
     @SuppressLint("NonConstantResourceId")
     @Override
     public void onClick(View v) {
-        v.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
         switch (v.getId()) {
             case R.id.btn_ILM_Take_Off:
                 buttons.takeOff();
                 break;
             case R.id.btn_ILM_Stop:
                 buttons.stop();
+                mapController.showAllWaypoints();
                 break;
             case R.id.btn_ILM_Land:
                 buttons.land();
                 break;
             case R.id.btn_ILM_GoTo:
-                buttons.goTo(waypoints, mapController);
+                buttons.goTo(waypoints, mapController, false);
                 break;
             case R.id.btn_ILM_FollowMe:
                 buttons.followMe();
@@ -293,58 +289,67 @@ public class ILM_RemoteControllerView extends RelativeLayout implements View.OnC
                 buttons.waypointsBtn();
                 break;
             case R.id.btn_ILM_Mission_1:
+                missions.clearMissions();
+                missions.addMission(1);
                 buttons.RepeatRoute(missions.loadMission(1), mapController, true);
                 break;
             case R.id.btn_ILM_Mission_2:
+                missions.clearMissions();
+                missions.addMission(2);
                 buttons.RepeatRoute(missions.loadMission(2), mapController, true);
                 break;
             case R.id.btn_ILM_Mission_3:
+                missions.clearMissions();
+                missions.addMission(3);
                 buttons.RepeatRoute(missions.loadMission(3), mapController, true);
                 break;
             case R.id.btn_ILM_Waypoint_1:
                 buttons.setCounter = buttons.count;
                 buttons.count = 0;
-                buttons.goTo(allWaypoints, mapController);
+                buttons.goTo(allWaypoints, mapController, false);
                 break;
             case R.id.btn_ILM_Waypoint_2:
                 buttons.setCounter = buttons.count;
                 buttons.count = 1;
-                buttons.goTo(allWaypoints, mapController);
+                buttons.goTo(allWaypoints, mapController, false);
                 break;
             case R.id.btn_ILM_Waypoint_3:
                 buttons.setCounter = buttons.count;
                 buttons.count = 2;
-                buttons.goTo(allWaypoints, mapController);
+                buttons.goTo(allWaypoints, mapController, false);
                 break;
             case R.id.btn_ILM_Waypoint_4:
                 buttons.setCounter = buttons.count;
                 buttons.count = 3;
-                buttons.goTo(allWaypoints, mapController);
+                buttons.goTo(allWaypoints, mapController, false);
                 break;
             case R.id.btn_ILM_Waypoint_5:
                 buttons.setCounter = buttons.count;
                 buttons.count = 4;
-                buttons.goTo(allWaypoints, mapController);
+                buttons.goTo(allWaypoints, mapController, false);
                 break;
             case R.id.btn_ILM_Waypoint_6:
                 buttons.setCounter = buttons.count;
                 buttons.count = 5;
-                buttons.goTo(allWaypoints, mapController);
+                buttons.goTo(allWaypoints, mapController, false);
                 break;
             case R.id.btn_ILM_Waypoint_7:
                 buttons.setCounter = buttons.count;
                 buttons.count = 6;
-                buttons.goTo(allWaypoints, mapController);
+                buttons.goTo(allWaypoints, mapController, false);
                 break;
             case R.id.btn_ILM_Waypoint_8:
                 buttons.setCounter = buttons.count;
                 buttons.count = 7;
-                buttons.goTo(allWaypoints, mapController);
+                buttons.goTo(allWaypoints, mapController, false);
                 break;
             case R.id.btn_ILM_MapResize:
                 Log.e("mapView_ILM", "mapView_ILM");
                 buttons.mapResize(isExpanded, mapView);
                 isExpanded = !isExpanded;
+                break;
+            case R.id.btn_ILM_MapCenter:
+                mapController.isMapCentered = false;
                 break;
             case R.id.btn_ILM_PeopleDetection:
                 video.setDetectionEnabled(!video.isDetectionEnabled());
@@ -387,7 +392,6 @@ public class ILM_RemoteControllerView extends RelativeLayout implements View.OnC
         waypoints.closeLogBrain();
         DJISampleApplication.getEventBus().post(new MainActivity.RequestEndFullScreenEvent());
         mapController.stopLocationUpdates();
-        gps.onDestroy();
         super.onDetachedFromWindow();
     }
 
@@ -402,7 +406,7 @@ public class ILM_RemoteControllerView extends RelativeLayout implements View.OnC
     @Override
     public void onSurfaceTextureAvailable(@NonNull SurfaceTexture surface, int width, int height) {
         if (mCodecManager == null) {
-            showToast(width + " " + height);
+            //showToast(width + " " + height);
             mCodecManager = new DJICodecManager(context, surface, width, height);
         }
     }

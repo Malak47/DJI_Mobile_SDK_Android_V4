@@ -59,7 +59,7 @@ public class ILM_GPS {
             latitude = location.getLatitude();
             longitude = location.getLongitude();
             altitude = location.getAltitude();
-            Log.d("GPS", "Location updated: Lat=" + location.getLatitude() + ", Lon=" + location.getLongitude());
+            //Log.d("GPS", "Location updated: Lat=" + location.getLatitude() + ", Lon=" + location.getLongitude());
 
         }
 

@@ -1,7 +1,5 @@
 package com.dji.sdk.sample.demo.ILM;
 
-import static com.dji.sdk.sample.internal.utils.ToastUtils.showToast;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
@@ -13,7 +11,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
-import com.dji.sdk.sample.R;
 import com.dji.sdk.sample.internal.utils.ToastUtils;
 import com.dji.sdk.sample.internal.utils.VideoFeedView;
 
@@ -103,7 +100,7 @@ public class ILM_Video {
             Log.d(TAG, "OpenCV initialized successfully.");
         }
         // Add a check for assets existence and log the paths for debugging
-        String modelPath = copyAssetToStorage(this.videoSurface.getContext(), "yolov7-tiny.weights");
+        String modelPath = copyAssetToStorage(this.videoSurface.getContext(), "yolov7.weights");
         String configPath = copyAssetToStorage(this.videoSurface.getContext(), "yolov7.cfg");
         Log.e("modelPath", modelPath);
         Log.e("configPath", configPath);

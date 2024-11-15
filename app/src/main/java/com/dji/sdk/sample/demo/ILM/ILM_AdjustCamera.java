@@ -13,20 +13,11 @@ import dji.common.util.CommonCallbacks;
 import dji.sdk.gimbal.Gimbal;
 import dji.sdk.sdkmanager.DJISDKManager;
 
-/**
- * The ILM_AdjustCamera class provides methods to adjust the gimbal's camera rotation
- * for DJI drones. It implements the ILM_iAdjustCamera interface and provides
- * functionalities to adjust yaw, pitch, and roll of the camera, as well as retrieve their values.
- */
 public class ILM_AdjustCamera implements ILM_iAdjustCamera {
     private int yaw;
     private int roll;
     private int pitch;
 
-    /**
-     * Constructor for ILM_AdjustCamera.
-     * Initializes the gimbal state and sets up a callback to update yaw, pitch, and roll values.
-     */
     public ILM_AdjustCamera() {
         Gimbal gimbal = DJISampleApplication.getProductInstance().getGimbal();
         if (gimbal != null) {
@@ -40,10 +31,6 @@ public class ILM_AdjustCamera implements ILM_iAdjustCamera {
         }
     }
 
-    /**
-     * Adjusts the camera's gimbal position based on the current yaw, pitch, and roll values.
-     * The rotation is set to absolute angles.
-     */
     @Override
     public void adjustCamera() {
         Gimbal gimbal = DJISDKManager.getInstance().getProduct().getGimbal();

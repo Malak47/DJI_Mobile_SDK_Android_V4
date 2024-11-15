@@ -2,13 +2,24 @@ package com.dji.sdk.sample.demo.ILM;
 
 import static com.google.android.gms.internal.zzahn.runOnUiThread;
 
+import android.content.Context;
+
+import com.dji.sdk.sample.R;
+
+import android.app.Service;
+
 import android.os.Handler;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
 import com.dji.sdk.sample.internal.controller.DJISampleApplication;
+import com.dji.sdk.sample.internal.controller.MainActivity;
 import com.dji.sdk.sample.internal.utils.ModuleVerificationUtil;
+import com.dji.sdk.sample.internal.view.PresentableView;
 
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -85,6 +96,52 @@ public class ILM_StatusBar {
                 }
             });
         }
+    }
+
+    public void updateDistance(TextView distance, ILM_GPS gps) {
+        final DecimalFormat decimalFormat = new DecimalFormat("0.0");
+        gps.requestLocationUpdates();
+
+        if (ModuleVerificationUtil.isFlightControllerAvailable()) {
+            ILM_GPS finalGps = gps;
+            DJISampleApplication.getAircraftInstance().getFlightController().setStateCallback(new FlightControllerState.Callback() {
+                @Override
+                public void onUpdate(FlightControllerState flightControllerState) {
+                    if (flightControllerState != null) {
+                        double lat1 = 0;
+                        double lon1 = 0;
+                        double alt1 = 0;
+                        LocationCoordinate3D aircraftLocation = flightControllerState.getAircraftLocation();
+                        if (aircraftLocation != null) {
+                            lat1 = aircraftLocation.getLatitude();
+                            lon1 = aircraftLocation.getLongitude();
+                            alt1 = aircraftLocation.getAltitude();
+                        }
+                        double R = 6371.0 + (alt1 + finalGps.getAltitude()) / 2; // Earth radius in kilometers, taking average altitude
+                        double lat1Rad = Math.toRadians(lat1);
+                        double lon1Rad = Math.toRadians(lon1);
+                        double lat2Rad = Math.toRadians(finalGps.getLatitude());
+                        double lon2Rad = Math.toRadians(finalGps.getLongitude());
+                        // Haversine formula
+                        double dLat = lat2Rad - lat1Rad;
+                        double dLon = lon2Rad - lon1Rad;
+                        double a = Math.pow(Math.sin(dLat / 2), 2) + Math.cos(lat1Rad) * Math.cos(lat2Rad) * Math.pow(Math.sin(dLon / 2), 2);
+                        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                        double temp = R * c;
+                        final String distanceVal = decimalFormat.format(String.valueOf(temp));
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                distance.setText(distanceVal + "m");
+                                setDistance(distance.getText().toString());
+                            }
+                        });
+                    }
+                }
+            });
+        }
+        gps.onDestroy();
+        gps = null;
     }
 
     public void updateXYZ(TextView x, TextView y, TextView z) {
@@ -176,7 +233,6 @@ public class ILM_StatusBar {
         };
         updateTimeRunnable.run();
     }
-
 
     public String getBattery() {
         return battery;

@@ -33,7 +33,6 @@
     <string name="stop">Stop</string>
     <string name="land">Land</string>
     <string name="go_to">Go To</string>
-    <string name="follow_me">Follow Me</string>
     <string name="_0">0</string>
     <string name="_0_m">0 m</string>
     <string name="_0_m_s">0 m/s</string>
@@ -399,5 +398,6 @@
     <string name="return_to_home">Return To Home</string>
     <string name="virtual_stick">Virtual Stick</string>
     <string name="people_detecion">Detect People</string>
+    <string name="follow_me">Follow Me</string>
 
 </resources>

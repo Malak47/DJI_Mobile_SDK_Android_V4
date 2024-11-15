@@ -26,7 +26,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.dji.sdk.sample.R;
-import com.dji.sdk.sample.demo.bluetooth.BluetoothView;
 import com.dji.sdk.sample.internal.controller.DJISampleApplication;
 import com.dji.sdk.sample.internal.controller.MainActivity;
 import com.dji.sdk.sample.internal.model.ViewWrapper;
@@ -104,7 +103,6 @@ public class MainContent extends RelativeLayout {
     private TextView mTextModelAvailable;
     private Button mBtnRegisterApp;
     private Button mBtnOpen;
-    private Button mBtnBluetooth;
     private ViewWrapper componentList =
             new ViewWrapper(new DemoListView(getContext()), R.string.activity_component_list);
     private ViewWrapper bluetoothView;
@@ -148,7 +146,6 @@ public class MainContent extends RelativeLayout {
         mTextProduct = (TextView) findViewById(R.id.text_product_info);
         mBtnRegisterApp = (Button) findViewById(R.id.btn_registerApp);
         mBtnOpen = (Button) findViewById(R.id.btn_open);
-        mBtnBluetooth = (Button) findViewById(R.id.btn_bluetooth);
 
         //mBtnBluetooth.setEnabled(false);
 
@@ -168,21 +165,6 @@ public class MainContent extends RelativeLayout {
                     return;
                 }
                 DJISampleApplication.getEventBus().post(componentList);
-            }
-        });
-        mBtnBluetooth.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (GeneralUtils.isFastDoubleClick()) {
-                    return;
-                }
-                if (DJISampleApplication.getBluetoothProductConnector() == null) {
-                    ToastUtils.setResultToToast("pls wait the sdk initiation finished");
-                    return;
-                }
-                bluetoothView =
-                        new ViewWrapper(new BluetoothView(getContext()), R.string.component_listview_bluetooth);
-                DJISampleApplication.getEventBus().post(bluetoothView);
             }
         });
 
@@ -209,12 +191,6 @@ public class MainContent extends RelativeLayout {
                             connector = DJISampleApplication.getBluetoothProductConnector();
 
                             if (connector != null) {
-                                mBtnBluetooth.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        mBtnBluetooth.setEnabled(true);
-                                    }
-                                });
                                 return;
                             } else if ((System.currentTimeMillis() - currentTime) >= 5000) {
                                 DialogUtils.showDialog(getContext(),
