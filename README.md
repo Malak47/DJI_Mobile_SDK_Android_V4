@@ -4,6 +4,11 @@ An advanced Android-based application built for autonomous DJI drone control, in
 
 ---
 
+## Documentation
+[CLICK HERE](https://drive.google.com/drive/folders/1WMS-Vn44woM4cEAaCn56HTGf4ozFhd0w?usp=sharing) to open project documentation and presentation
+
+---
+
 ### Functionalities
 
 - <img src="app/src/main/res/drawable/ilm_drone_return_to_home.png" width="20"> **Return to Home**: Automatically navigates the drone back to the takeoff point.
